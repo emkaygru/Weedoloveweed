@@ -16,7 +16,24 @@ A shared cannabis diary/log for 4 users. Search strains, log sessions, write rev
 | Database | PostgreSQL (via Vercel Postgres or Neon) |
 | ORM | Prisma |
 | Hosting | Vercel |
-| Strain Data | Open cannabis strain API (see API section below) |
+| Photos | Vercel Blob |
+| Strain Data | Cannlytics API + Kushy seed data |
+| Dispensary Search | Google Places API + manual entry |
+| Charts | Recharts (terpene visualizations) |
+
+---
+
+## Design Direction
+
+**Style: Colorful + Playful**
+- Bold, vibrant color palette
+- Fun gradients and expressive UI
+- Strain type color coding:
+  - Indica: Purple/violet tones
+  - Sativa: Orange/warm tones
+  - Hybrid: Green tones
+- Rounded cards, playful typography
+- PWA — installable on home screens from browser
 
 ---
 
@@ -41,26 +58,60 @@ Each log entry captures:
 - **Rating** (1-5 stars)
 - **Feelings/effects** (tags: relaxed, creative, hungry, sleepy, etc.)
 - **Review** (free-text)
-- **Purchase info** (dispensary name, brand)
+- **Dispensary** (from dispensary picker — see below)
+- **Brand** (free-text)
 - **Photos** (upload from phone camera/gallery)
 - **Who logged it** (automatic from auth)
 
-### 4. Social Feed
-- Real-time-ish feed on the home page
-- Shows: **"[Name] is smoking [Strain Name]"**
-- Each feed item links to the full log entry
-- Shows strain thumbnail, quick rating, and a snippet of the review
-- Chronological, newest first
+### 4. Social Feed (Home Page / Default Landing)
+The feed is the **primary landing page** of the app. It's what you see when you open the app.
 
-### 5. Bookmarks / Favorites
+**Compact card format:**
+- **Avatar + Name** (Google profile pic)
+- **"[Name] is smoking [Strain Name]"** headline
+- **Strain type badge** (Indica/Sativa/Hybrid — color-coded)
+- **Star rating** (1-5)
+- **Photo thumbnail** (if uploaded)
+- **Dispensary name** as a small tag
+- **Timestamp** ("2 hours ago", "Yesterday")
+- Tap card to expand → full review, terpene info, brand, feelings, etc.
+- **Quick actions** on each card: Bookmark the strain, share
+
+Feed is chronological, newest first. All 4 users' posts are visible.
+
+### 5. Badge Notifications (PWA)
+- Red badge count on the PWA home screen icon showing unread feed posts
+- Uses the Badging API (supported on Android Chrome + iOS Safari 16.4+)
+- Tracks "last seen" timestamp per user, counts new posts since then
+- Badge clears when app is opened
+- No push notifications — lightweight and non-intrusive
+
+### 6. Dispensary Tracking
+**Hybrid approach: Google Places API + Manual Entry**
+
+- **Location-based suggestions**: Auto-detect user location (browser geolocation) to suggest nearby dispensaries
+- **Zip code search**: Type a zip code to find dispensaries in that area via Google Places API
+- **Favorites**: Frequently-used dispensaries pinned to top of picker
+- **Manual add**: Users can add a dispensary manually if not found
+- **Pre-seeded dispensaries**:
+  - Green Dragon (College Ave, Fort Collins, CO)
+  - Livewell (Denver, CO)
+  - Starbuds (Denver, CO)
+
+When logging an entry, the dispensary picker shows:
+1. Your favorite/recent dispensaries
+2. Nearby dispensaries (via location or zip)
+3. Option to add a new one manually
+
+### 7. Bookmarks / Favorites
 - Bookmark any strain to a personal "Want to Try" or "Favorites" list
 - Quick access from profile page
 
-### 6. Share
+### 8. Share
 - Share a log entry or strain via link (public shareable URL)
 - Copy-to-clipboard or native share on mobile
 
-### 7. Terpene Profiles
+### 9. Terpene Profiles
 - Visual terpene breakdown for each strain (radar chart or bar chart)
 - Common terpenes: Myrcene, Limonene, Caryophyllene, Linalool, Pinene, Humulene, Terpinolene
 - Color-coded for easy reading
@@ -76,6 +127,7 @@ User
 - name
 - email (Google)
 - image (Google avatar)
+- lastSeenFeed (DateTime — for badge notifications)
 - entries (relation)
 - bookmarks (relation)
 ```
@@ -102,14 +154,30 @@ Entry
 - id
 - userId (relation -> User)
 - strainId (relation -> Strain)
+- dispensaryId (relation -> Dispensary)
 - rating (1-5)
 - review (text)
 - feelings (JSON array of tags)
-- dispensary (string)
 - brand (string)
 - photos (JSON array of URLs)
 - createdAt
 - updatedAt
+```
+
+### Dispensaries
+```
+Dispensary
+- id
+- name
+- address
+- city
+- state
+- zipCode
+- latitude
+- longitude
+- googlePlaceId (optional — from Google Places API)
+- isPreSeeded (boolean)
+- entries (relation)
 ```
 
 ### Bookmarks
@@ -128,11 +196,11 @@ Bookmark
 
 | Route | Description |
 |-------|-------------|
-| `/` | Social feed (home) — "Name is smoking..." |
+| `/` | Social feed (home) — compact cards, "Name is smoking..." |
 | `/search` | Strain search page |
 | `/strain/[id]` | Strain detail page (terpenes, info, past reviews) |
 | `/log/new` | Create new diary entry |
-| `/log/[id]` | View a single diary entry |
+| `/log/[id]` | View a single diary entry (expanded card) |
 | `/profile` | User's own entries, bookmarks, stats |
 | `/login` | Google sign-in page |
 
@@ -175,28 +243,32 @@ Bookmark
 
 ### Phase 1: Foundation
 - [ ] Initialize Next.js project with TypeScript + Tailwind
-- [ ] Set up Prisma + PostgreSQL schema
+- [ ] Set up Prisma + PostgreSQL schema (all models)
 - [ ] Configure NextAuth.js with Google OAuth
 - [ ] Whitelist 4 user emails
 - [ ] Deploy skeleton to Vercel
 
-### Phase 2: Strain Search & Data
-- [ ] Integrate strain API (or seed database)
+### Phase 2: Social Feed (Home Page)
+- [ ] Home feed page as default landing
+- [ ] Compact feed cards ("Name is smoking Strain")
+- [ ] Tap-to-expand full entry view
+- [ ] Strain type badges (color-coded)
+- [ ] Timestamps and avatars
+
+### Phase 3: Strain Search & Data
+- [ ] Integrate Cannlytics API
+- [ ] Import Kushy seed dataset
 - [ ] Build search page with autocomplete
 - [ ] Strain detail page with terpene visualization
 - [ ] Cache strain data in Postgres to reduce API calls
 
-### Phase 3: Diary / Logging
+### Phase 4: Diary / Logging
 - [ ] Create entry form (strain, rating, review, feelings, dispensary, photos)
-- [ ] Photo upload (Vercel Blob or similar)
+- [ ] Dispensary picker (Google Places + favorites + manual)
+- [ ] Photo upload via Vercel Blob
+- [ ] Pre-seed dispensaries (Green Dragon, Livewell, Starbuds)
 - [ ] Entry detail view
 - [ ] Edit / delete entries
-
-### Phase 4: Social Feed
-- [ ] Home feed showing all users' recent entries
-- [ ] "Name is smoking Strain" format
-- [ ] Link to full entry
-- [ ] Strain thumbnails in feed
 
 ### Phase 5: Bookmarks & Sharing
 - [ ] Bookmark strains (favorites / want to try)
@@ -205,21 +277,31 @@ Bookmark
 - [ ] Mobile share integration
 
 ### Phase 6: Polish
-- [ ] Mobile-responsive PWA setup (installable on phones)
-- [ ] Terpene radar/bar charts
+- [ ] PWA setup (installable, home screen badge notifications)
+- [ ] Terpene radar/bar charts (Recharts)
 - [ ] User stats (total strains tried, favorite type, etc.)
-- [ ] Dark mode (it's a weed app, come on)
+- [ ] Colorful + playful theme polish
 
 ---
 
-## Open Questions for Discussion
+## Decisions Made
 
-1. **Strain API**: Weedmaps/Leafly APIs are generally restricted to business partners. We'll likely need an open alternative or seed our own data. See research findings above.
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Auth | Google OAuth | Real identity, easy setup, persistent login |
+| Photo storage | Vercel Blob | Simple, included with Vercel, sufficient for 4 users |
+| App type | PWA | Installable from browser, no app store needed |
+| Notifications | Badge count only | Lightweight, shows unread count on home screen icon |
+| Privacy | All entries visible | It's a shared friend group — everything is public to the 4 users |
+| Design | Colorful + playful | Bold colors, fun gradients, strain-type color coding |
+| Feed style | Compact cards | Strain, rating, photo, dispensary at a glance — tap to expand |
+| Dispensaries | Google Places + manual | Location search + pre-seeded favorites + manual add |
+| Strain API | Cannlytics + Kushy seed | Best free data for terpenes/cannabinoids + seed dataset for coverage |
 
-2. **Photo storage**: Vercel Blob (simple, included) vs Cloudinary (image optimization) vs S3?
+---
 
-3. **PWA vs native app**: A PWA (Progressive Web App) works great on phones, is installable from the browser, and avoids app store headaches. Recommended for a 4-person app.
+## Still Needed Before Building
 
-4. **Notifications**: Want push notifications when someone posts to the feed? (Nice-to-have, not required for v1.)
-
-5. **Privacy**: Should entries be visible to all 4 users by default, or should there be a "private" option?
+1. **4 Google email addresses** to whitelist for auth
+2. **Google Cloud API key** for Google Places (dispensary search) — needs a Google Cloud project with Places API enabled
+3. **Vercel account** connected to this repo for deployments
