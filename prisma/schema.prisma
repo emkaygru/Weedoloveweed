@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── NextAuth Required Models ───────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── App Models ─────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  lastSeenFeed  DateTime  @default(now())
+
+  accounts  Account[]
+  sessions  Session[]
+  entries   Entry[]
+  bookmarks Bookmark[]
+}
+
+model Strain {
+  id             String  @id @default(cuid())
+  name           String
+  slug           String  @unique
+  type           String  // "indica", "sativa", "hybrid"
+  description    String? @db.Text
+  thcPercent     Float?
+  cbdPercent     Float?
+  imageUrl       String?
+  terpeneProfile Json?   // { "myrcene": 0.45, "limonene": 0.32, ... }
+  effects        Json?   // ["relaxed", "happy", "sleepy"]
+  flavors        Json?   // ["earthy", "citrus", "pine"]
+  apiSourceId    String? // external API reference
+  isUserCreated  Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  entries   Entry[]
+  bookmarks Bookmark[]
+}
+
+model Dispensary {
+  id            String  @id @default(cuid())
+  name          String
+  address       String?
+  city          String?
+  state         String?
+  zipCode       String?
+  latitude      Float?
+  longitude     Float?
+  googlePlaceId String?
+  isPreSeeded   Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  entries Entry[]
+}
+
+model Entry {
+  id           String  @id @default(cuid())
+  userId       String
+  strainId     String
+  dispensaryId String?
+  rating       Int     // 1-5
+  review       String? @db.Text
+  feelings     Json?   // ["relaxed", "creative", "hungry"]
+  brand        String?
+  photos       Json?   // ["https://...", "https://..."]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strain     Strain      @relation(fields: [strainId], references: [id])
+  dispensary Dispensary?  @relation(fields: [dispensaryId], references: [id])
+}
+
+model Bookmark {
+  id       String @id @default(cuid())
+  userId   String
+  strainId String
+  listType String // "favorites" or "want_to_try"
+
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strain Strain @relation(fields: [strainId], references: [id])
+
+  @@unique([userId, strainId, listType])
+}
