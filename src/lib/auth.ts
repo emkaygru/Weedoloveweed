@@ -4,12 +4,11 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma";
 
 // Whitelist of allowed email addresses
-// Replace these with the 4 real Gmail addresses
 const ALLOWED_EMAILS = [
-  "user1@gmail.com",
-  "user2@gmail.com",
-  "user3@gmail.com",
-  "user4@gmail.com",
+  "mikeconnors193@gmail.com",
+  "lunarischarlie@gmail.com",
+  "lane.emilykay@gmail.com",
+  "steph.r.emanuele@gmail.com",
 ];
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -23,7 +22,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       // Only allow whitelisted emails
-      if (!user.email || !ALLOWED_EMAILS.includes(user.email)) {
+      if (!user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
         return false;
       }
       return true;
