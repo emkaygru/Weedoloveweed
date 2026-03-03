@@ -1,6 +1,9 @@
 import Link from "next/link";
 import StrainBadge from "./StrainBadge";
 import StarRating from "./StarRating";
+import MethodBadge from "./MethodBadge";
+import LikeButton from "./LikeButton";
+import CommentSection from "./CommentSection";
 
 interface FeedCardProps {
   id: string;
@@ -9,9 +12,22 @@ interface FeedCardProps {
   strainName: string;
   strainType: string;
   rating: number;
+  method?: string | null;
   dispensaryName?: string | null;
   photoUrl?: string | null;
+  gifUrl?: string | null;
+  review?: string | null;
   createdAt: Date;
+  likeCount: number;
+  liked: boolean;
+  comments: Array<{
+    id: string;
+    text: string;
+    gifUrl?: string | null;
+    createdAt: string;
+    user: { name: string | null; image: string | null };
+  }>;
+  currentUserId: string;
 }
 
 function timeAgo(date: Date): string {
@@ -33,13 +49,19 @@ export default function FeedCard({
   strainName,
   strainType,
   rating,
+  method,
   dispensaryName,
   photoUrl,
+  gifUrl,
+  review,
   createdAt,
+  likeCount,
+  liked,
+  comments,
 }: FeedCardProps) {
   return (
-    <Link href={`/log/${id}`}>
-      <div className="rounded-2xl border border-card-border bg-card p-4 shadow-sm transition-shadow hover:shadow-md">
+    <div className="rounded-2xl border border-card-border bg-card p-4 shadow-sm">
+      <Link href={`/log/${id}`}>
         <div className="flex items-start gap-3">
           {/* Avatar */}
           <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-primary-light/30">
@@ -67,12 +89,17 @@ export default function FeedCard({
             <div className="mt-1 flex flex-wrap items-center gap-2">
               <StrainBadge type={strainType} />
               <StarRating rating={rating} />
+              {method && <MethodBadge method={method} />}
               {dispensaryName && (
                 <span className="text-xs text-muted">
                   @ {dispensaryName}
                 </span>
               )}
             </div>
+
+            {review && (
+              <p className="mt-2 text-sm text-muted line-clamp-2">{review}</p>
+            )}
 
             <p className="mt-1 text-xs text-muted">{timeAgo(createdAt)}</p>
           </div>
@@ -88,7 +115,35 @@ export default function FeedCard({
             </div>
           )}
         </div>
+
+        {/* GIF */}
+        {gifUrl && (
+          <div className="mt-3">
+            <img
+              src={gifUrl}
+              alt="GIF"
+              className="max-h-48 w-full rounded-xl object-cover"
+            />
+          </div>
+        )}
+      </Link>
+
+      {/* Like & Comment */}
+      <div className="mt-3 border-t border-card-border pt-2">
+        <div className="flex items-center gap-3">
+          <LikeButton entryId={id} initialLiked={liked} initialCount={likeCount} />
+          <span className="text-xs text-muted">
+            {comments.length > 0 ? `${comments.length} comment${comments.length === 1 ? "" : "s"}` : ""}
+          </span>
+        </div>
+        <CommentSection
+          entryId={id}
+          initialComments={comments.map((c) => ({
+            ...c,
+            createdAt: c.createdAt.toString(),
+          }))}
+        />
       </div>
-    </Link>
+    </div>
   );
 }

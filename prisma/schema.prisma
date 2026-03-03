@@ -4,9 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL_UNPOOLED")
+  provider = "postgresql"
 }
 
 // ─── NextAuth Required Models ───────────────────────────────────────
@@ -61,6 +59,9 @@ model User {
   sessions  Session[]
   entries   Entry[]
   bookmarks Bookmark[]
+  thoughts  Thought[]
+  likes     Like[]
+  comments  Comment[]
 }
 
 model Strain {
@@ -83,6 +84,7 @@ model Strain {
 
   entries   Entry[]
   bookmarks Bookmark[]
+  thoughts  Thought[]
 }
 
 model Dispensary {
@@ -112,6 +114,8 @@ model Entry {
   feelings     Json?   // ["relaxed", "creative", "hungry"]
   brand        String?
   photos       Json?   // ["https://...", "https://..."]
+  method       String? // "joint", "edible", "pax", "concentrate", "bong", "pipe", "blunt", "dab"
+  gifUrl       String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -119,6 +123,55 @@ model Entry {
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   strain     Strain      @relation(fields: [strainId], references: [id])
   dispensary Dispensary?  @relation(fields: [dispensaryId], references: [id])
+  likes      Like[]
+  comments   Comment[]
+}
+
+model Thought {
+  id        String   @id @default(cuid())
+  userId    String
+  strainId  String?
+  text      String   @db.Text
+  gifUrl    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  strain   Strain?   @relation(fields: [strainId], references: [id])
+  likes    Like[]
+  comments Comment[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  entryId   String?
+  thoughtId String?
+
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entry   Entry?   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  thought Thought? @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, entryId])
+  @@unique([userId, thoughtId])
+}
+
+model Comment {
+  id        String  @id @default(cuid())
+  userId    String
+  entryId   String?
+  thoughtId String?
+  text      String  @db.Text
+  gifUrl    String?
+
+  createdAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entry   Entry?   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  thought Thought? @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
 }
 
 model Bookmark {

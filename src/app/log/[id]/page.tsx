@@ -3,6 +3,10 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import StrainBadge from "@/components/StrainBadge";
 import StarRating from "@/components/StarRating";
+import MethodBadge from "@/components/MethodBadge";
+import LikeButton from "@/components/LikeButton";
+import CommentSection from "@/components/CommentSection";
+import Link from "next/link";
 
 export default async function EntryDetailPage({
   params,
@@ -13,6 +17,7 @@ export default async function EntryDetailPage({
   if (!session?.user) redirect("/login");
 
   const { id } = await params;
+  const userId = session.user.id!;
 
   const entry = await prisma.entry.findUnique({
     where: { id },
@@ -20,6 +25,11 @@ export default async function EntryDetailPage({
       user: true,
       strain: true,
       dispensary: true,
+      likes: { select: { userId: true } },
+      comments: {
+        include: { user: { select: { name: true, image: true } } },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
@@ -62,12 +72,15 @@ export default async function EntryDetailPage({
 
         {/* Strain info */}
         <div className="mt-4">
-          <h2 className="text-xl font-bold text-primary">
-            {entry.strain.name}
-          </h2>
-          <div className="mt-1 flex items-center gap-2">
+          <Link href={`/strain/${entry.strain.id}`}>
+            <h2 className="text-xl font-bold text-primary hover:underline">
+              {entry.strain.name}
+            </h2>
+          </Link>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
             <StrainBadge type={entry.strain.type} />
             <StarRating rating={entry.rating} />
+            {entry.method && <MethodBadge method={entry.method} />}
           </div>
         </div>
 
@@ -82,6 +95,17 @@ export default async function EntryDetailPage({
                 className="h-48 w-48 flex-shrink-0 rounded-xl object-cover"
               />
             ))}
+          </div>
+        )}
+
+        {/* GIF */}
+        {entry.gifUrl && (
+          <div className="mt-4">
+            <img
+              src={entry.gifUrl}
+              alt="GIF"
+              className="max-h-64 rounded-xl"
+            />
           </div>
         )}
 
@@ -110,6 +134,22 @@ export default async function EntryDetailPage({
             <span>📍 {entry.dispensary.name}</span>
           )}
           {entry.brand && <span>🏷️ {entry.brand}</span>}
+        </div>
+
+        {/* Like & Comment */}
+        <div className="mt-4 border-t border-card-border pt-3">
+          <LikeButton
+            entryId={entry.id}
+            initialLiked={entry.likes.some((l) => l.userId === userId)}
+            initialCount={entry.likes.length}
+          />
+          <CommentSection
+            entryId={entry.id}
+            initialComments={entry.comments.map((c) => ({
+              ...c,
+              createdAt: c.createdAt.toISOString(),
+            }))}
+          />
         </div>
       </div>
     </div>

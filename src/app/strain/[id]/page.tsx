@@ -3,6 +3,8 @@ import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import StrainBadge from "@/components/StrainBadge";
 import StarRating from "@/components/StarRating";
+import { TERPENE_INFO } from "@/lib/terpenes";
+import StrainActions from "@/components/StrainActions";
 
 export default async function StrainDetailPage({
   params,
@@ -34,6 +36,11 @@ export default async function StrainDetailPage({
     ? strain.entries.reduce((sum, e) => sum + e.rating, 0) /
       strain.entries.length
     : null;
+
+  // Sort terpenes by value descending
+  const sortedTerpenes = terpenes
+    ? Object.entries(terpenes).sort(([, a], [, b]) => b - a)
+    : [];
 
   return (
     <div>
@@ -130,19 +137,30 @@ export default async function StrainDetailPage({
           </div>
         )}
 
-        {/* Terpene profile placeholder — will be a chart later */}
-        {terpenes && Object.keys(terpenes).length > 0 && (
+        {/* Terpene profile with explanations */}
+        {sortedTerpenes.length > 0 && (
           <div className="mt-4">
             <h3 className="text-xs font-semibold uppercase text-muted">
-              Terpenes
+              Terpene Profile
             </h3>
-            <div className="mt-2 space-y-1.5">
-              {Object.entries(terpenes)
-                .sort(([, a], [, b]) => b - a)
-                .map(([name, value]) => (
-                  <div key={name} className="flex items-center gap-2">
-                    <span className="w-24 text-xs capitalize">{name}</span>
-                    <div className="h-2 flex-1 rounded-full bg-card-border">
+            <div className="mt-2 space-y-3">
+              {sortedTerpenes.map(([name, value]) => {
+                const info =
+                  TERPENE_INFO[name.toLowerCase()] ||
+                  TERPENE_INFO[name.toLowerCase().replace(/[_-]/g, "")] ||
+                  null;
+                return (
+                  <div key={name} className="rounded-xl bg-primary/5 p-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold capitalize">
+                        {info?.emoji || "🌱"} {name}
+                      </span>
+                      <span className="text-xs font-medium text-muted">
+                        {(value * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    {/* Bar */}
+                    <div className="mt-1.5 h-2 rounded-full bg-card-border">
                       <div
                         className="h-2 rounded-full bg-gradient-to-r from-primary to-hybrid"
                         style={{
@@ -150,14 +168,26 @@ export default async function StrainDetailPage({
                         }}
                       />
                     </div>
-                    <span className="w-10 text-right text-xs text-muted">
-                      {(value * 100).toFixed(1)}%
-                    </span>
+                    {/* Description */}
+                    {info && (
+                      <div className="mt-2">
+                        <p className="text-xs text-muted">
+                          {info.description}
+                        </p>
+                        <p className="mt-0.5 text-xs font-medium text-primary">
+                          {info.effects}
+                        </p>
+                      </div>
+                    )}
                   </div>
-                ))}
+                );
+              })}
             </div>
           </div>
         )}
+
+        {/* Bookmark actions */}
+        <StrainActions strainId={strain.id} strainName={strain.name} />
       </div>
 
       {/* Recent reviews */}
