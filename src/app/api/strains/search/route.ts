@@ -1,17 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-
-// Otreeba Open Cannabis API for external strain data
-const OTREEBA_API = "https://api.otreeba.com/cannabisreports/v1.0a/strains";
-
-interface ExternalStrain {
-  name: string;
-  ucpc?: string;
-  genetics?: { names?: string };
-  lineage?: Record<string, string>;
-  image?: string;
-}
+import { BUILT_IN_STRAINS } from "@/data/strains";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -26,7 +16,9 @@ export async function GET(request: Request) {
     return NextResponse.json({ results: [] });
   }
 
-  // Search local database
+  const lowerQuery = query.toLowerCase();
+
+  // Search local database (user-created strains + any previously saved)
   const localResults = await prisma.strain.findMany({
     where: {
       name: { contains: query, mode: "insensitive" },
@@ -35,43 +27,27 @@ export async function GET(request: Request) {
     orderBy: { name: "asc" },
   });
 
-  // Try external API (non-blocking, graceful fallback)
-  let externalResults: Array<{
-    name: string;
-    type: string;
-    description: string | null;
-    external: boolean;
-    apiSourceId: string | null;
-    imageUrl: string | null;
-  }> = [];
+  // Search built-in strain dataset
+  const builtInResults = BUILT_IN_STRAINS.filter((s) =>
+    s.name.toLowerCase().includes(lowerQuery)
+  )
+    .slice(0, 10)
+    .map((s) => ({
+      name: s.name,
+      type: s.type,
+      description: s.description,
+      thcPercent: s.thcPercent,
+      cbdPercent: s.cbdPercent,
+      effects: s.effects,
+      flavors: s.flavors,
+      builtIn: true,
+    }));
 
-  try {
-    const res = await fetch(
-      `${OTREEBA_API}?search=${encodeURIComponent(query)}&page=0&count=10`,
-      { signal: AbortSignal.timeout(3000) }
-    );
-    if (res.ok) {
-      const data = await res.json();
-      if (data?.data) {
-        externalResults = data.data.map((s: ExternalStrain) => ({
-          name: s.name,
-          type: "hybrid",
-          description: s.genetics?.names || null,
-          external: true,
-          apiSourceId: s.ucpc || null,
-          imageUrl: s.image || null,
-        }));
-      }
-    }
-  } catch {
-    // External API failed, continue with local results only
-  }
-
-  // Deduplicate — prefer local results
+  // Deduplicate — prefer local DB results over built-in
   const localNames = new Set(localResults.map((s) => s.name.toLowerCase()));
   const merged = [
     ...localResults.map((s) => ({ ...s, external: false })),
-    ...externalResults.filter((s) => !localNames.has(s.name.toLowerCase())),
+    ...builtInResults.filter((s) => !localNames.has(s.name.toLowerCase())),
   ];
 
   return NextResponse.json({ results: merged });

@@ -59,7 +59,28 @@ export default function StrainSearchInput({ onSelect, selectedStrain }: Props) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelectStrain = (strain: StrainResult) => {
+  const handleSelectStrain = async (strain: StrainResult) => {
+    // If the strain has no id (built-in dataset), create it in the DB first
+    if (!strain.id) {
+      try {
+        const res = await fetch("/api/strains/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: strain.name,
+            type: strain.type,
+            description: strain.description,
+            thcPercent: strain.thcPercent,
+          }),
+        });
+        const created = await res.json();
+        if (created.id) {
+          strain = { ...strain, id: created.id };
+        }
+      } catch {
+        // Fall through with original strain
+      }
+    }
     onSelect(strain);
     setQuery(strain.name);
     setShowDropdown(false);

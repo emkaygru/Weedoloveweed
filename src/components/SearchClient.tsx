@@ -48,16 +48,39 @@ export default function SearchClient({ userId }: { userId: string }) {
     }, 300);
   }, [query]);
 
+  // Ensure a strain exists in the DB (create from built-in data if needed)
+  const ensureStrainInDb = async (strain: StrainResult): Promise<StrainResult> => {
+    if (strain.id) return strain;
+    const res = await fetch("/api/strains/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: strain.name,
+        type: strain.type,
+        description: strain.description,
+        thcPercent: strain.thcPercent,
+        cbdPercent: strain.cbdPercent,
+        effects: strain.effects,
+        flavors: strain.flavors,
+      }),
+    });
+    const created = await res.json();
+    const saved = { ...strain, id: created.id, slug: created.slug };
+    setSelectedStrain(saved);
+    return saved;
+  };
+
   const addToTryList = async (strain: StrainResult) => {
-    if (!strain.id || bookmarking) return;
+    if (bookmarking) return;
     setBookmarking(true);
     try {
+      const s = await ensureStrainInDb(strain);
       await fetch("/api/bookmarks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ strainId: strain.id, listType: "want_to_try" }),
+        body: JSON.stringify({ strainId: s.id, listType: "want_to_try" }),
       });
-      alert(`Added "${strain.name}" to your try list!`);
+      alert(`Added "${s.name}" to your try list!`);
     } catch {
       // Error
     } finally {
@@ -66,15 +89,16 @@ export default function SearchClient({ userId }: { userId: string }) {
   };
 
   const addToFavorites = async (strain: StrainResult) => {
-    if (!strain.id || bookmarking) return;
+    if (bookmarking) return;
     setBookmarking(true);
     try {
+      const s = await ensureStrainInDb(strain);
       await fetch("/api/bookmarks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ strainId: strain.id, listType: "favorites" }),
+        body: JSON.stringify({ strainId: s.id, listType: "favorites" }),
       });
-      alert(`Added "${strain.name}" to favorites!`);
+      alert(`Added "${s.name}" to favorites!`);
     } catch {
       // Error
     } finally {
@@ -224,14 +248,14 @@ export default function SearchClient({ userId }: { userId: string }) {
           <div className="mt-4 flex gap-2">
             <button
               onClick={() => addToTryList(selectedStrain)}
-              disabled={bookmarking || !selectedStrain.id}
+              disabled={bookmarking}
               className="flex-1 rounded-xl bg-sativa py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               📋 Want to Try
             </button>
             <button
               onClick={() => addToFavorites(selectedStrain)}
-              disabled={bookmarking || !selectedStrain.id}
+              disabled={bookmarking}
               className="flex-1 rounded-xl bg-accent-pink py-2.5 text-sm font-semibold text-white disabled:opacity-50"
             >
               ❤️ Favorite
