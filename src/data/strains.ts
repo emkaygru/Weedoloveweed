@@ -6,6 +6,7 @@ export interface BuiltInStrain {
   description: string;
   effects: string[];
   flavors: string[];
+  terpeneProfile: Record<string, number> | null;
 }
 
 export const BUILT_IN_STRAINS: BuiltInStrain[] = [
@@ -18,6 +19,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sativa-dominant hybrid originating from California. Cross of Blueberry and Haze.",
     effects: ["relaxed", "happy", "euphoric", "creative", "uplifted"],
     flavors: ["blueberry", "sweet", "berry"],
+    terpeneProfile: {"linalool": 0.0398, "nerolidol": 0.0143, "alphaPinene": 0.0106, "caryophyllene": 0.0102, "myrcene": 0.0086, "limonene": 0.0079},
   },
   {
     name: "OG Kush",
@@ -27,6 +29,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "The backbone of West Coast cannabis. A legendary strain with complex aroma.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "hungry"],
     flavors: ["earthy", "pine", "woody"],
+    terpeneProfile: {"linalool": 0.0293, "limonene": 0.0123, "humulene": 0.0119, "caryophyllene": 0.0111, "alphaPinene": 0.0084, "caryophylleneOxide": 0.0081},
   },
   {
     name: "Sour Diesel",
@@ -36,6 +39,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Named after its pungent, diesel-like aroma. A fast-acting strain with energizing effects.",
     effects: ["energetic", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["diesel", "pungent", "earthy"],
+    terpeneProfile: {"linalool": 0.0202, "humulene": 0.0145, "caryophyllene": 0.0115, "limonene": 0.0115, "alphaPinene": 0.0096, "caryophylleneOxide": 0.007},
   },
   {
     name: "Girl Scout Cookies",
@@ -45,6 +49,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A potent hybrid cross of OG Kush and Durban Poison. Known as GSC.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["sweet", "earthy", "pungent"],
+    terpeneProfile: {"linalool": 0.0291, "humulene": 0.0128, "caryophyllene": 0.0113, "limonene": 0.0104, "alphaPinene": 0.0088, "caryophylleneOxide": 0.0079},
   },
   {
     name: "Granddaddy Purple",
@@ -54,6 +59,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A famous indica cross of Purple Urkle and Big Bud. Complex grape and berry aroma.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["grape", "berry", "sweet"],
+    terpeneProfile: {"linalool": 0.025, "myrcene": 0.0174, "alphaPinene": 0.0121, "caryophyllene": 0.011, "humulene": 0.009, "limonene": 0.0068},
   },
   {
     name: "Jack Herer",
@@ -63,6 +69,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Named after the cannabis activist. A sativa-dominant blend of Haze, Northern Lights #5, and Shiva Skunk.",
     effects: ["happy", "uplifted", "energetic", "creative", "focused"],
     flavors: ["earthy", "pine", "woody"],
+    terpeneProfile: {"linalool": 0.026, "terpinolene": 0.0181, "limonene": 0.0129, "caryophyllene": 0.0109, "humulene": 0.0066, "alphaPinene": 0.0059},
   },
   {
     name: "Northern Lights",
@@ -72,6 +79,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "One of the most famous indica strains of all time. Pure indica bliss.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "hungry"],
     flavors: ["earthy", "pine", "sweet"],
+    terpeneProfile: {"linalool": 0.0283, "myrcene": 0.009, "caryophyllene": 0.0088, "alphaPinene": 0.0077, "humulene": 0.0075, "limonene": 0.0073},
   },
   {
     name: "White Widow",
@@ -81,6 +89,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Dutch classic from the 1990s. Balanced hybrid known for its white crystal resin.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["earthy", "woody", "pungent"],
+    terpeneProfile: {"linalool": 0.0442, "limonene": 0.0157, "caryophyllene": 0.0095, "humulene": 0.0089, "alphaPinene": 0.0083, "caryophylleneOxide": 0.0078},
   },
   {
     name: "AK-47",
@@ -90,6 +99,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Sativa-dominant hybrid with a complex blend of Colombian, Mexican, Thai, and Afghani varieties.",
     effects: ["happy", "relaxed", "uplifted", "euphoric", "creative"],
     flavors: ["earthy", "pungent", "floral"],
+    terpeneProfile: {"linalool": 0.0296, "caryophyllene": 0.0093, "myrcene": 0.0083, "humulene": 0.0079, "alphaPinene": 0.0077, "limonene": 0.0069},
   },
   {
     name: "Pineapple Express",
@@ -99,6 +109,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sativa-dominant hybrid combining Trainwreck and Hawaiian. Long-lasting energetic buzz.",
     effects: ["happy", "uplifted", "euphoric", "energetic", "creative"],
     flavors: ["pineapple", "tropical", "citrus"],
+    terpeneProfile: {"linalool": 0.0349, "limonene": 0.0171, "carene": 0.0144, "alphaPinene": 0.0137, "betaPinene": 0.0118, "humulene": 0.0103},
   },
 
   // ── Modern Favorites ─────────────────────────────────────────────
@@ -110,6 +121,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A slightly indica-dominant hybrid from Sunset Sherbet and Thin Mint Girl Scout Cookies.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["sweet", "citrus", "earthy"],
+    terpeneProfile: {"caryophyllene": 0.0093, "limonene": 0.0054, "humulene": 0.0036, "linalool": 0.0026, "myrcene": 0.0024, "alphaPinene": 0.0018},
   },
   {
     name: "Wedding Cake",
@@ -119,6 +131,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as Pink Cookies. A cross of Triangle Kush and Animal Mints.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "hungry"],
     flavors: ["sweet", "vanilla", "earthy"],
+    terpeneProfile: {"caryophyllene": 0.0101, "myrcene": 0.0081, "humulene": 0.0065, "alphaPinene": 0.0055, "limonene": 0.0047, "terpinolene": 0.002},
   },
   {
     name: "Gorilla Glue #4",
@@ -128,6 +141,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "An extremely potent hybrid known for its heavy-handed euphoria. Chem's Sister x Sour Dubb x Chocolate Diesel.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "sleepy"],
     flavors: ["earthy", "pine", "pungent"],
+    terpeneProfile: {"carene": 0.0178, "humulene": 0.0122, "caryophyllene": 0.0111, "limonene": 0.0074, "alphaPinene": 0.0045, "myrcene": 0.0045},
   },
   {
     name: "Runtz",
@@ -137,6 +151,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Zkittlez and Gelato. Known for its incredibly fruity flavor profile.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "giggly"],
     flavors: ["sweet", "tropical", "fruity"],
+    terpeneProfile: {"limonene": 0.0085, "caryophyllene": 0.0072, "linalool": 0.0058, "myrcene": 0.0035, "humulene": 0.0022},
   },
   {
     name: "Zkittlez",
@@ -146,6 +161,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "An indica-dominant strain with a sweet fruity flavor. Award-winning genetics.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "focused"],
     flavors: ["sweet", "berry", "tropical"],
+    terpeneProfile: {"caryophyllene": 0.0399, "humulene": 0.0147, "limonene": 0.0092, "linalool": 0.0072, "bisabolol": 0.0044, "myrcene": 0.003},
   },
   {
     name: "Do-Si-Dos",
@@ -155,6 +171,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "An indica-dominant hybrid of Girl Scout Cookies and Face Off OG.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "hungry"],
     flavors: ["earthy", "sweet", "pungent"],
+    terpeneProfile: {"limonene": 0.0095, "caryophyllene": 0.0082, "linalool": 0.0065, "myrcene": 0.0038, "humulene": 0.003},
   },
   {
     name: "Mimosa",
@@ -164,6 +181,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sativa-leaning hybrid of Clementine and Purple Punch. Rising star.",
     effects: ["happy", "uplifted", "energetic", "creative", "focused"],
     flavors: ["citrus", "sweet", "tropical"],
+    terpeneProfile: {"limonene": 0.0051, "caryophyllene": 0.0049, "myrcene": 0.0024, "humulene": 0.0017, "alphaPinene": 0.0016, "guaiol": 0.001},
   },
   {
     name: "Ice Cream Cake",
@@ -173,6 +191,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Wedding Cake and Gelato #33. Creamy vanilla and sweet dough flavors.",
     effects: ["relaxed", "sleepy", "happy", "hungry", "euphoric"],
     flavors: ["vanilla", "sweet", "creamy"],
+    terpeneProfile: {"linalool": 0.0178, "terpinolene": 0.0138, "humulene": 0.0089, "alphaPinene": 0.0085, "caryophyllene": 0.0062, "myrcene": 0.0044},
   },
   {
     name: "Mac 1",
@@ -182,6 +201,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Miracle Alien Cookies. A balanced hybrid of Alien Cookies and Starfighter x Columbian.",
     effects: ["happy", "euphoric", "uplifted", "creative", "relaxed"],
     flavors: ["citrus", "earthy", "floral"],
+    terpeneProfile: {"limonene": 0.0112, "caryophyllene": 0.0108, "humulene": 0.01, "linalool": 0.0099, "caryophylleneOxide": 0.0059, "alphaPinene": 0.0057},
   },
   {
     name: "Gary Payton",
@@ -191,6 +211,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Named after the NBA Hall of Famer. A Cookies collab cross of The Y and Snowman.",
     effects: ["happy", "euphoric", "relaxed", "tingly", "creative"],
     flavors: ["earthy", "pungent", "diesel"],
+    terpeneProfile: {"linalool": 0.0257, "caryophyllene": 0.0074, "caryophylleneOxide": 0.0063, "alphaPinene": 0.0049, "myrcene": 0.0027},
   },
 
   // ── Classic Indicas ──────────────────────────────────────────────
@@ -202,6 +223,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A pure indica from Hindu Kush and Purple Afghani. Known for deep sedation.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "grape", "sweet"],
+    terpeneProfile: {"linalool": 0.0329, "limonene": 0.0104, "humulene": 0.0097, "caryophylleneOxide": 0.009, "caryophyllene": 0.0089, "alphaPinene": 0.0085},
   },
   {
     name: "Bubba Kush",
@@ -211,6 +233,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A heavy indica with tranquilizing effects. Sweet hashish flavors with subtle chocolate and coffee notes.",
     effects: ["relaxed", "sleepy", "happy", "hungry", "euphoric"],
     flavors: ["coffee", "chocolate", "earthy"],
+    terpeneProfile: {"linalool": 0.03, "humulene": 0.0135, "limonene": 0.0133, "alphaPinene": 0.0084, "caryophyllene": 0.008, "caryophylleneOxide": 0.0073},
   },
   {
     name: "Hindu Kush",
@@ -220,6 +243,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A pure indica landrace strain from the Hindu Kush mountain range.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "pine", "sweet"],
+    terpeneProfile: {"linalool": 0.028, "humulene": 0.0128, "caryophyllene": 0.0124, "alphaPinene": 0.0097, "caryophylleneOxide": 0.0094, "limonene": 0.007},
   },
   {
     name: "Purple Punch",
@@ -229,6 +253,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Larry OG and Granddaddy Purple. Tastes like grape candy.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["grape", "sweet", "blueberry"],
+    terpeneProfile: {"limonene": 0.0088, "ocimene": 0.0078, "caryophyllene": 0.0066, "myrcene": 0.0048, "linalool": 0.0037, "alphaPinene": 0.0031},
   },
   {
     name: "Death Star",
@@ -238,6 +263,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Sensi Star and Sour Diesel. Potent indica with a pungent diesel aroma.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["diesel", "earthy", "pungent"],
+    terpeneProfile: {"caryophyllene": 0.0092, "humulene": 0.0077, "linalool": 0.0072, "myrcene": 0.0054, "limonene": 0.0052, "caryophylleneOxide": 0.005},
   },
 
   // ── Classic Sativas ──────────────────────────────────────────────
@@ -249,6 +275,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Formerly known as Cush. A sharp energy and focus with a tangy, fruity flavor.",
     effects: ["energetic", "happy", "focused", "uplifted", "creative"],
     flavors: ["citrus", "earthy", "sweet"],
+    terpeneProfile: {"linalool": 0.0306, "limonene": 0.014, "alphaPinene": 0.0085, "caryophyllene": 0.0084, "myrcene": 0.0071, "betaPinene": 0.0069},
   },
   {
     name: "Durban Poison",
@@ -258,6 +285,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A pure sativa landrace strain from South Africa. Known for its sweet smell and energizing effects.",
     effects: ["energetic", "uplifted", "happy", "creative", "focused"],
     flavors: ["sweet", "earthy", "pine"],
+    terpeneProfile: {"linalool": 0.0192, "terpinolene": 0.016, "limonene": 0.0098, "humulene": 0.0082, "caryophyllene": 0.0071, "caryophylleneOxide": 0.0063},
   },
   {
     name: "Super Lemon Haze",
@@ -267,6 +295,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Two-time Cannabis Cup winner. A cross of Lemon Skunk and Super Silver Haze.",
     effects: ["happy", "energetic", "uplifted", "creative", "euphoric"],
     flavors: ["lemon", "citrus", "sweet"],
+    terpeneProfile: {"linalool": 0.0329, "limonene": 0.0151, "terpinolene": 0.014, "caryophyllene": 0.0116, "humulene": 0.0066, "alphaPinene": 0.0064},
   },
   {
     name: "Strawberry Cough",
@@ -276,6 +305,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Known for its sweet strawberry aroma and tendency to make users cough.",
     effects: ["happy", "uplifted", "euphoric", "energetic", "creative"],
     flavors: ["strawberry", "sweet", "berry"],
+    terpeneProfile: {"linalool": 0.0261, "myrcene": 0.0158, "carene": 0.0128, "limonene": 0.0112, "alphaPinene": 0.0101, "caryophyllene": 0.0088},
   },
   {
     name: "Tangie",
@@ -285,6 +315,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A remake of Tangerine Dream. Fresh citrus aroma reminiscent of tangerines.",
     effects: ["happy", "uplifted", "euphoric", "creative", "energetic"],
     flavors: ["citrus", "tangerine", "sweet"],
+    terpeneProfile: {"limonene": 0.0119, "myrcene": 0.0113, "caryophyllene": 0.0073, "alphaPinene": 0.0053, "humulene": 0.0051, "terpinolene": 0.0051},
   },
   {
     name: "Maui Wowie",
@@ -294,6 +325,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A classic sativa from the volcanic soils of Hawaii. Pineapple flavors and stress-relieving qualities.",
     effects: ["happy", "uplifted", "euphoric", "energetic", "creative"],
     flavors: ["pineapple", "tropical", "citrus"],
+    terpeneProfile: {"linalool": 0.0307, "limonene": 0.0156, "humulene": 0.0092, "myrcene": 0.0085, "caryophyllene": 0.0072, "alphaPinene": 0.0065},
   },
   {
     name: "Lamb's Bread",
@@ -303,6 +335,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as Lamb's Breath. A Jamaican sativa said to be Bob Marley's favorite strain.",
     effects: ["happy", "uplifted", "energetic", "creative", "euphoric"],
     flavors: ["earthy", "herbal", "spicy"],
+    terpeneProfile: {"linalool": 0.0196, "limonene": 0.0091, "caryophyllene": 0.006, "myrcene": 0.0056, "alphaPinene": 0.0056, "terpinolene": 0.0036},
   },
 
   // ── More Modern Hybrids ──────────────────────────────────────────
@@ -314,6 +347,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as Sunset Sherbet. A potent descendant of Girl Scout Cookies.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["sweet", "berry", "citrus"],
+    terpeneProfile: {"caryophyllene": 0.0089, "limonene": 0.0065, "myrcene": 0.0037, "nerolidol": 0.0037, "humulene": 0.0034, "pCymene": 0.0034},
   },
   {
     name: "GMO Cookies",
@@ -323,6 +357,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as Garlic Cookies. A cross of Chemdawg and GSC. Extremely pungent.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "hungry"],
     flavors: ["garlic", "diesel", "earthy"],
+    terpeneProfile: {"limonene": 0.0071, "myrcene": 0.0052, "caryophyllene": 0.0039, "humulene": 0.0019},
   },
   {
     name: "Cereal Milk",
@@ -332,6 +367,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Cookies Fam creation. Reminds of the sweet milk left after a bowl of fruity cereal.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["sweet", "creamy", "fruity"],
+    terpeneProfile: {"caryophyllene": 0.0087, "humulene": 0.0079, "limonene": 0.0052, "alphaPinene": 0.0017},
   },
   {
     name: "Biscotti",
@@ -341,6 +377,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Cookies Fam original. Cross of Gelato #25 and South Florida OG.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "tingly"],
     flavors: ["sweet", "earthy", "diesel"],
+    terpeneProfile: {"caryophyllene": 0.0131, "limonene": 0.0048, "humulene": 0.0035, "linalool": 0.0026, "bisabolol": 0.0018, "myrcene": 0.0013},
   },
   {
     name: "London Pound Cake",
@@ -350,6 +387,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Cookies Fam indica with nutty, berry flavors and lemon-pepper kick.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "hungry"],
     flavors: ["sweet", "berry", "lemon"],
+    terpeneProfile: {"humulene": 0.0128, "alphaPinene": 0.0031, "caryophyllene": 0.0011},
   },
   {
     name: "Lemon Cherry Gelato",
@@ -359,6 +397,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Sunset Sherbet and Girl Scout Cookies. Tangy and sweet terpene profile.",
     effects: ["relaxed", "happy", "euphoric", "creative", "uplifted"],
     flavors: ["lemon", "cherry", "sweet"],
+    terpeneProfile: {"alphaPinene": 0.0068, "humulene": 0.0066, "caryophyllene": 0.0045, "myrcene": 0.0014},
   },
   {
     name: "Apple Fritter",
@@ -368,6 +407,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A potent hybrid of Sour Apple and Animal Cookies. Smells like fresh apple pastries.",
     effects: ["relaxed", "happy", "euphoric", "tingly", "giggly"],
     flavors: ["apple", "sweet", "earthy"],
+    terpeneProfile: {"limonene": 0.0622, "humulene": 0.0074, "myrcene": 0.0074},
   },
   {
     name: "Jealousy",
@@ -377,6 +417,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Seed Junky Genetics creation. Cross of Sherbet and Gelato 41.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "tingly"],
     flavors: ["earthy", "sweet", "funky"],
+    terpeneProfile: {"caryophyllene": 0.0098, "limonene": 0.0085, "linalool": 0.0062, "myrcene": 0.004, "humulene": 0.0035},
   },
   {
     name: "Gushers",
@@ -386,6 +427,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Gelato #41 and Triangle Kush. Named after the fruit snack.",
     effects: ["relaxed", "happy", "euphoric", "tingly", "creative"],
     flavors: ["sweet", "tropical", "fruity"],
+    terpeneProfile: {"limonene": 0.0072, "caryophyllene": 0.0063, "linalool": 0.0024, "myrcene": 0.0022, "humulene": 0.0017, "betaPinene": 0.0014},
   },
   {
     name: "Slurricane",
@@ -395,6 +437,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Do-Si-Dos and Purple Punch by In House Genetics.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["berry", "sweet", "grape"],
+    terpeneProfile: {"caryophyllene": 0.0027, "limonene": 0.0025, "guaiol": 0.0014},
   },
   {
     name: "Grape Ape",
@@ -404,6 +447,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Mendocino Purps, Skunk, and Afghani. Distinctly grape flavor.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "hungry"],
     flavors: ["grape", "berry", "sweet"],
+    terpeneProfile: {"linalool": 0.0236, "alphaPinene": 0.0116, "myrcene": 0.0114, "ocimene": 0.0106, "humulene": 0.0078, "caryophyllene": 0.0078},
   },
   {
     name: "Trainwreck",
@@ -413,6 +457,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sativa-dominant hybrid with Mexican and Thai sativa landrace roots. Hard-hitting and fast.",
     effects: ["happy", "euphoric", "uplifted", "creative", "energetic"],
     flavors: ["pine", "earthy", "lemon"],
+    terpeneProfile: {"linalool": 0.0428, "ocimene": 0.0259, "limonene": 0.0185, "terpinolene": 0.0123, "caryophyllene": 0.0099, "alphaPinene": 0.0087},
   },
   {
     name: "Chemdawg",
@@ -422,6 +467,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A legendary strain with mysterious origins. The parent to Sour Diesel and OG Kush.",
     effects: ["relaxed", "happy", "euphoric", "creative", "uplifted"],
     flavors: ["diesel", "chemical", "earthy"],
+    terpeneProfile: {"linalool": 0.0222, "humulene": 0.0117, "limonene": 0.0112, "caryophyllene": 0.0089, "alphaPinene": 0.0082, "caryophylleneOxide": 0.0063},
   },
   {
     name: "LA Confidential",
@@ -431,6 +477,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of OG LA Affie and Afghani. A classic nighttime indica.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "pine", "woody"],
+    terpeneProfile: {"linalool": 0.0309, "limonene": 0.0169, "humulene": 0.0113, "caryophyllene": 0.0094, "alphaPinene": 0.0086, "caryophylleneOxide": 0.0066},
   },
   {
     name: "Headband",
@@ -440,6 +487,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of OG Kush and Sour Diesel. Named for the slight pressure around the crown of your head.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["lemon", "diesel", "earthy"],
+    terpeneProfile: {"linalool": 0.0165, "caryophyllene": 0.0112, "limonene": 0.0104, "humulene": 0.01, "alphaPinene": 0.0075, "caryophylleneOxide": 0.0071},
   },
   {
     name: "Bruce Banner",
@@ -449,6 +497,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Named after the Hulk's alter ego. One of the strongest strains available. OG Kush x Strawberry Diesel.",
     effects: ["happy", "euphoric", "relaxed", "creative", "uplifted"],
     flavors: ["diesel", "sweet", "earthy"],
+    terpeneProfile: {"linalool": 0.0139, "caryophyllene": 0.0066, "caryophylleneOxide": 0.0065, "myrcene": 0.0063, "humulene": 0.0051, "limonene": 0.005},
   },
   {
     name: "Cherry Pie",
@@ -458,6 +507,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Granddaddy Purple and F1 Durb. Smells like fresh-baked cherry pie.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["cherry", "sweet", "berry"],
+    terpeneProfile: {"linalool": 0.0131, "humulene": 0.0123, "caryophyllene": 0.0109, "limonene": 0.0069, "alphaPinene": 0.0068, "myrcene": 0.0067},
   },
   {
     name: "Platinum OG",
@@ -467,6 +517,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A heavy indica reportedly derived from Master Kush, OG Kush, and a third unknown parent.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "pine", "sweet"],
+    terpeneProfile: {"linalool": 0.0146, "humulene": 0.0145, "caryophyllene": 0.0079, "caryophylleneOxide": 0.0067, "limonene": 0.0066, "alphaPinene": 0.0064},
   },
   {
     name: "Banana Kush",
@@ -476,6 +527,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A hybrid of Ghost OG and Skunk Haze. Creamy banana flavor.",
     effects: ["happy", "relaxed", "euphoric", "uplifted", "creative"],
     flavors: ["banana", "sweet", "tropical"],
+    terpeneProfile: {"linalool": 0.0364, "caryophylleneOxide": 0.0108, "limonene": 0.0089, "alphaPinene": 0.0086, "caryophyllene": 0.0077, "humulene": 0.0054},
   },
   {
     name: "Skywalker OG",
@@ -485,6 +537,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Skywalker and OG Kush. Powerful indica-dominant hybrid.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "spicy", "herbal"],
+    terpeneProfile: {"linalool": 0.0209, "caryophyllene": 0.0107, "humulene": 0.0093, "limonene": 0.0087, "myrcene": 0.0085, "caryophylleneOxide": 0.0084},
   },
   {
     name: "GG4",
@@ -494,6 +547,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as Original Glue. Award-winning hybrid with heavy resin production.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "sleepy"],
     flavors: ["earthy", "pine", "chocolate"],
+    terpeneProfile: {"caryophyllene": 0.0142, "humulene": 0.0107, "limonene": 0.0081, "myrcene": 0.0057, "alphaPinene": 0.0029, "linalool": 0.0016},
   },
   {
     name: "Tropicana Cookies",
@@ -503,6 +557,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Girl Scout Cookies and Tangie. Bright purple buds with citrus aroma.",
     effects: ["happy", "uplifted", "energetic", "creative", "euphoric"],
     flavors: ["citrus", "sweet", "tropical"],
+    terpeneProfile: {"limonene": 0.0145, "myrcene": 0.0065, "caryophyllene": 0.0058, "terpinolene": 0.0042, "linalool": 0.0035},
   },
   {
     name: "Papaya",
@@ -512,6 +567,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sweet tropical strain with heavy indica effects. Fruity and mango-like aroma.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "hungry"],
     flavors: ["tropical", "mango", "sweet"],
+    terpeneProfile: {"linalool": 0.0186, "limonene": 0.0141, "humulene": 0.0083, "caryophyllene": 0.0079, "myrcene": 0.0052, "alphaPinene": 0.0044},
   },
   {
     name: "Amnesia Haze",
@@ -521,6 +577,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A sativa-dominant hybrid popular in Amsterdam. Multiple Cannabis Cup winner.",
     effects: ["happy", "euphoric", "energetic", "uplifted", "creative"],
     flavors: ["lemon", "citrus", "earthy"],
+    terpeneProfile: {"linalool": 0.0135, "terpinolene": 0.0078, "caryophyllene": 0.0074, "humulene": 0.0057, "limonene": 0.0053, "alphaPinene": 0.0045},
   },
   {
     name: "Critical Mass",
@@ -530,6 +587,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A high-CBD indica cross of Afghani and Skunk #1. Relatively balanced THC:CBD ratio.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "hungry"],
     flavors: ["earthy", "sweet", "citrus"],
+    terpeneProfile: {"linalool": 0.0283, "humulene": 0.0074, "caryophyllene": 0.0069, "limonene": 0.0066, "caryophylleneOxide": 0.0058, "myrcene": 0.0057},
   },
   {
     name: "ACDC",
@@ -539,6 +597,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A CBD-dominant phenotype of Cannatonic. Minimal psychoactive effects, maximum therapeutic benefit.",
     effects: ["relaxed", "happy", "focused", "uplifted", "calm"],
     flavors: ["earthy", "woody", "pine"],
+    terpeneProfile: {"myrcene": 0.0132, "linalool": 0.0125, "alphaPinene": 0.0121, "eucalyptol": 0.0089, "betaPinene": 0.0067, "limonene": 0.0062},
   },
   {
     name: "Harlequin",
@@ -548,6 +607,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A high-CBD sativa. One of the most popular CBD strains. Clear-headed and alert.",
     effects: ["relaxed", "happy", "focused", "uplifted", "calm"],
     flavors: ["earthy", "sweet", "mango"],
+    terpeneProfile: {"linalool": 0.0483, "limonene": 0.0136, "alphaPinene": 0.0089, "myrcene": 0.0082, "caryophyllene": 0.0072, "humulene": 0.0069},
   },
   {
     name: "Charlotte's Web",
@@ -557,6 +617,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A CBD-dominant strain that gained fame for treating epilepsy. Minimal THC.",
     effects: ["relaxed", "calm", "focused", "happy", "uplifted"],
     flavors: ["earthy", "pine", "sweet"],
+    terpeneProfile: {"linalool": 0.0406, "myrcene": 0.0107, "alphaPinene": 0.0064, "terpinolene": 0.0055, "caryophyllene": 0.0051, "limonene": 0.0043},
   },
   {
     name: "Cannatonic",
@@ -566,6 +627,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A hybrid bred specifically for high CBD content. Great for medical use.",
     effects: ["relaxed", "happy", "uplifted", "focused", "calm"],
     flavors: ["earthy", "citrus", "sweet"],
+    terpeneProfile: {"linalool": 0.0238, "myrcene": 0.0095, "caryophyllene": 0.0059, "alphaPinene": 0.0057, "humulene": 0.0055, "caryophylleneOxide": 0.0053},
   },
   {
     name: "White Runtz",
@@ -575,6 +637,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A balanced hybrid of Zkittlez and Gelato. Sweet and fruity with potent effects.",
     effects: ["relaxed", "happy", "euphoric", "giggly", "creative"],
     flavors: ["sweet", "fruity", "candy"],
+    terpeneProfile: {"limonene": 0.009, "caryophyllene": 0.0075, "linalool": 0.006, "myrcene": 0.004, "humulene": 0.0025},
   },
   {
     name: "Pink Runtz",
@@ -584,6 +647,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A phenotype of Runtz. Sweet and fruity with beautiful pink-purple buds.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "giggly"],
     flavors: ["sweet", "candy", "fruity"],
+    terpeneProfile: {"limonene": 0.0088, "caryophyllene": 0.007, "linalool": 0.0055, "myrcene": 0.0038, "humulene": 0.002},
   },
   {
     name: "Kush Mints",
@@ -593,6 +657,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Animal Mints and Bubba Kush by Seed Junky Genetics.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "tingly"],
     flavors: ["mint", "earthy", "coffee"],
+    terpeneProfile: {"limonene": 0.005, "linalool": 0.0021, "caryophyllene": 0.0014, "myrcene": 0.0013},
   },
   {
     name: "Wifi OG",
@@ -602,6 +667,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Also known as White Fire OG. A cross of Fire OG and The White.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["earthy", "diesel", "woody"],
+    terpeneProfile: {"humulene": 0.0065, "caryophyllene": 0.0054, "limonene": 0.0054, "myrcene": 0.0034, "alphaPinene": 0.0033, "terpinolene": 0.0028},
   },
   {
     name: "Thin Mint Cookies",
@@ -611,6 +677,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A phenotype of Girl Scout Cookies with a minty chocolate flavor.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["mint", "sweet", "earthy"],
+    terpeneProfile: {"caryophyllene": 0.014, "humulene": 0.0114, "linalool": 0.0076, "limonene": 0.0058, "alphaPinene": 0.0042, "caryophylleneOxide": 0.0027},
   },
   {
     name: "Forbidden Fruit",
@@ -620,6 +687,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Cherry Pie and Tangie. Tropical and cherry flavors.",
     effects: ["relaxed", "happy", "sleepy", "euphoric", "uplifted"],
     flavors: ["cherry", "tropical", "citrus"],
+    terpeneProfile: {"caryophyllene": 0.0047, "myrcene": 0.0042, "limonene": 0.0033, "linalool": 0.0029, "humulene": 0.0015, "guaiol": 0.0014},
   },
   {
     name: "Animal Mints",
@@ -629,6 +697,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Animal Cookies and SinMint Cookies by Seed Junky Genetics.",
     effects: ["relaxed", "happy", "euphoric", "tingly", "uplifted"],
     flavors: ["mint", "earthy", "diesel"],
+    terpeneProfile: {"limonene": 0.0057, "caryophyllene": 0.0041, "myrcene": 0.0035, "linalool": 0.0017, "humulene": 0.0014, "betaPinene": 0.001},
   },
   {
     name: "Dosidos",
@@ -638,6 +707,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "An indica-dominant hybrid of Girl Scout Cookies and Face Off OG.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "hungry"],
     flavors: ["earthy", "sweet", "floral"],
+    terpeneProfile: {"caryophyllene": 0.0071, "limonene": 0.0054, "linalool": 0.0029, "myrcene": 0.0027, "humulene": 0.0025, "bisabolol": 0.001},
   },
   {
     name: "Rainbow Belts",
@@ -647,6 +717,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Zkittlez cross known for its candy-like flavor and colorful buds.",
     effects: ["happy", "euphoric", "relaxed", "creative", "giggly"],
     flavors: ["sweet", "fruity", "candy"],
+    terpeneProfile: {"linalool": 0.0192, "humulene": 0.009, "alphaPinene": 0.0079, "myrcene": 0.0079, "caryophylleneOxide": 0.0058, "caryophyllene": 0.0029},
   },
   {
     name: "Super Silver Haze",
@@ -656,6 +727,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "Three-time Cannabis Cup winner. A cross of Skunk, Northern Lights, and Haze.",
     effects: ["happy", "uplifted", "euphoric", "energetic", "creative"],
     flavors: ["citrus", "earthy", "spicy"],
+    terpeneProfile: {"linalool": 0.0275, "limonene": 0.0126, "caryophyllene": 0.0085, "humulene": 0.007, "alphaPinene": 0.0068, "caryophylleneOxide": 0.0065},
   },
   {
     name: "Blue Cheese",
@@ -665,6 +737,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Blueberry and UK Cheese. Unique savory-sweet aroma.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "hungry"],
     flavors: ["cheese", "blueberry", "earthy"],
+    terpeneProfile: {"linalool": 0.0307, "limonene": 0.0169, "caryophyllene": 0.0126, "humulene": 0.0096, "alphaPinene": 0.0079, "caryophylleneOxide": 0.0064},
   },
   {
     name: "Lava Cake",
@@ -674,6 +747,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Thin Mint GSC and Grape Pie. Rich chocolate and mint flavors.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["chocolate", "mint", "sweet"],
+    terpeneProfile: {"limonene": 0.0092, "caryophyllene": 0.008, "linalool": 0.0068, "myrcene": 0.0045, "humulene": 0.003},
   },
   {
     name: "Georgia Pie",
@@ -683,6 +757,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A Seed Junky Genetics creation exclusive to Cookies. Sweet peach terpenes.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["peach", "sweet", "earthy"],
+    terpeneProfile: {"limonene": 0.0105, "caryophyllene": 0.0072, "myrcene": 0.006, "linalool": 0.0048, "humulene": 0.0025},
   },
   {
     name: "Cookies and Cream",
@@ -692,6 +767,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Starfighter and a GSC pheno. Sweet vanilla and cream flavor.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["vanilla", "sweet", "earthy"],
+    terpeneProfile: {"limonene": 0.0101, "caryophyllene": 0.0096, "caryophylleneOxide": 0.0088, "myrcene": 0.0056, "humulene": 0.0038, "terpinolene": 0.0038},
   },
   {
     name: "Blackberry Kush",
@@ -701,6 +777,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Afghani and Blackberry. Dense buds with a jet fuel and berry aroma.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["berry", "earthy", "sweet"],
+    terpeneProfile: {"linalool": 0.0252, "humulene": 0.0108, "limonene": 0.0085, "caryophylleneOxide": 0.0069, "caryophyllene": 0.0068, "alphaPinene": 0.0064},
   },
   {
     name: "King Louis XIII",
@@ -710,6 +787,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "An indica-dominant cross of OG Kush and LA Confidential. Royal relaxation.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "pine", "woody"],
+    terpeneProfile: {"humulene": 0.0035, "alphaPinene": 0.0034, "myrcene": 0.0034, "caryophyllene": 0.0011},
   },
   {
     name: "Tahoe OG",
@@ -719,6 +797,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A phenotype of OG Kush found near Lake Tahoe. Potent and fast-acting indica.",
     effects: ["relaxed", "sleepy", "happy", "euphoric", "hungry"],
     flavors: ["earthy", "lemon", "pine"],
+    terpeneProfile: {"linalool": 0.022, "humulene": 0.01, "caryophyllene": 0.0082, "alphaPinene": 0.0082, "caryophylleneOxide": 0.0067, "limonene": 0.0061},
   },
   {
     name: "Sundae Driver",
@@ -728,6 +807,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of FPOG and Grape Pie. Creamy and fruity dessert-like flavors.",
     effects: ["relaxed", "happy", "euphoric", "uplifted", "creative"],
     flavors: ["sweet", "fruity", "chocolate"],
+    terpeneProfile: {"limonene": 0.0063, "caryophyllene": 0.0048, "myrcene": 0.0022, "humulene": 0.0015, "linalool": 0.0015, "guaiol": 0.0013},
   },
   {
     name: "Mango Kush",
@@ -737,6 +817,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Mango and Hindu Kush. Tropical mango and banana flavors.",
     effects: ["happy", "relaxed", "euphoric", "uplifted", "creative"],
     flavors: ["mango", "tropical", "sweet"],
+    terpeneProfile: {"linalool": 0.0359, "humulene": 0.0099, "alphaPinene": 0.0083, "myrcene": 0.0078, "limonene": 0.0071, "caryophyllene": 0.0067},
   },
   {
     name: "White Truffle",
@@ -746,6 +827,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A phenotype of Gorilla Butter. Earthy and pungent with heavy trichome production.",
     effects: ["relaxed", "happy", "euphoric", "tingly", "creative"],
     flavors: ["earthy", "pungent", "diesel"],
+    terpeneProfile: {"caryophyllene": 0.011, "myrcene": 0.0085, "limonene": 0.0065, "humulene": 0.0045, "linalool": 0.003},
   },
   {
     name: "Zoap",
@@ -755,6 +837,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Pink Guava and Rainbow Sherbet. Soapy, floral terpene profile.",
     effects: ["happy", "euphoric", "relaxed", "uplifted", "creative"],
     flavors: ["floral", "sweet", "fruity"],
+    terpeneProfile: {"limonene": 0.0095, "caryophyllene": 0.0082, "linalool": 0.007, "myrcene": 0.005, "humulene": 0.003},
   },
   {
     name: "Grease Monkey",
@@ -764,6 +847,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Gorilla Glue #4 and Cookies and Cream by Exotic Genetix.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "hungry"],
     flavors: ["earthy", "sweet", "vanilla"],
+    terpeneProfile: {"caryophyllene": 0.0089, "limonene": 0.0072, "myrcene": 0.004, "humulene": 0.0033, "linalool": 0.003, "caryophylleneOxide": 0.0015},
   },
   {
     name: "Blueberry",
@@ -773,6 +857,7 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A legendary indica by DJ Short. 2000 Cannabis Cup winner for Best Indica.",
     effects: ["relaxed", "happy", "euphoric", "sleepy", "uplifted"],
     flavors: ["blueberry", "sweet", "berry"],
+    terpeneProfile: {"linalool": 0.028, "caryophyllene": 0.0099, "limonene": 0.0098, "alphaPinene": 0.0083, "myrcene": 0.0079, "caryophylleneOxide": 0.0077},
   },
   {
     name: "Lemon Haze",
@@ -782,5 +867,6 @@ export const BUILT_IN_STRAINS: BuiltInStrain[] = [
     description: "A cross of Lemon Skunk and Silver Haze. Zesty citrus flavor and energizing effects.",
     effects: ["happy", "uplifted", "energetic", "creative", "euphoric"],
     flavors: ["lemon", "citrus", "sweet"],
+    terpeneProfile: {"linalool": 0.0154, "limonene": 0.0113, "caryophyllene": 0.0102, "terpinolene": 0.0085, "alphaPinene": 0.0076, "humulene": 0.0067},
   },
 ];

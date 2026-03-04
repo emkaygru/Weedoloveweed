@@ -77,6 +77,42 @@ export const TERPENE_INFO: Record<
     description: "Earthy, musky aroma with damp woodland notes.",
     effects: "Antioxidant, pain relief, cardiovascular support",
   },
+  nerolidol: {
+    emoji: "🌳",
+    description: "Woody, floral terpene found in ginger, jasmine, and tea tree.",
+    effects: "Sedating, anti-parasitic, antifungal",
+  },
+  eucalyptol: {
+    emoji: "🍃",
+    description: "Minty, cooling terpene. Main component of eucalyptus oil.",
+    effects: "Anti-inflammatory, pain relief, mental clarity",
+  },
+  guaiol: {
+    emoji: "🪵",
+    description: "Piney, woody terpene found in cypress pine and guaiacum.",
+    effects: "Anti-inflammatory, antimicrobial, antioxidant",
+  },
+  carene: {
+    emoji: "🌲",
+    description: "Sweet, pungent terpene found in cedar, pine, and rosemary.",
+    effects: "Anti-inflammatory, bone health, memory support",
+  },
+  // camelCase aliases for lab-sourced terpene profile keys
+  alphaPinene: {
+    emoji: "🌲",
+    description: "Fresh pine scent. Found in pine needles and rosemary.",
+    effects: "Alertness, memory retention, anti-inflammatory",
+  },
+  betaPinene: {
+    emoji: "🌲",
+    description: "Fresh herbal pine scent. Found in pine needles and basil.",
+    effects: "Alertness, memory retention, anti-inflammatory",
+  },
+  caryophylleneOxide: {
+    emoji: "🌶️",
+    description: "Oxidized form of caryophyllene with a lighter, woody-spicy aroma.",
+    effects: "Antifungal, anti-inflammatory, analgesic",
+  },
 };
 
 export const CONSUMPTION_METHODS = [

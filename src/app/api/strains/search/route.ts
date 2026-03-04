@@ -40,6 +40,7 @@ export async function GET(request: Request) {
       cbdPercent: s.cbdPercent,
       effects: s.effects,
       flavors: s.flavors,
+      terpeneProfile: s.terpeneProfile,
       builtIn: true,
     }));
 

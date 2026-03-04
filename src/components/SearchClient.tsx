@@ -62,6 +62,7 @@ export default function SearchClient({ userId }: { userId: string }) {
         cbdPercent: strain.cbdPercent,
         effects: strain.effects,
         flavors: strain.flavors,
+        terpeneProfile: strain.terpeneProfile,
       }),
     });
     const created = await res.json();

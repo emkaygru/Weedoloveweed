@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { name, type, description, thcPercent, cbdPercent, effects, flavors } = body;
+  const { name, type, description, thcPercent, cbdPercent, effects, flavors, terpeneProfile } = body;
 
   if (!name?.trim()) {
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
@@ -37,6 +37,7 @@ export async function POST(request: Request) {
       cbdPercent: cbdPercent ? Number(cbdPercent) : null,
       effects: effects?.length ? effects : null,
       flavors: flavors?.length ? flavors : null,
+      terpeneProfile: terpeneProfile || null,
       isUserCreated: true,
     },
   });
