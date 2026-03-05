@@ -22,8 +22,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   callbacks: {
     async signIn({ user }) {
+      console.log("[auth] signIn callback for:", user.email);
       // Only allow whitelisted emails
       if (!user.email || !ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
+        console.log("[auth] email not whitelisted:", user.email);
         return false;
       }
       return true;
@@ -33,6 +35,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.id = user.id;
       }
       return session;
+    },
+  },
+  logger: {
+    error(code, ...message) {
+      const err = message[0];
+      const cause = err instanceof Error ? { message: err.message, stack: err.stack, cause: (err as any).cause } : err;
+      console.error("[auth][error]", code, JSON.stringify(cause));
     },
   },
   pages: {
