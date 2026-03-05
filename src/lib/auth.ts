@@ -38,13 +38,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   logger: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    error(code: string, ...message: any[]) {
-      const err = message[0];
-      const cause = err instanceof Error
-        ? { message: err.message, stack: err.stack, cause: (err as any).cause }
-        : err;
-      console.error("[auth][error]", code, JSON.stringify(cause));
+    error(error: Error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const cause = (error as any).cause;
+      console.error("[auth][error]", error.message, JSON.stringify({
+        name: error.name,
+        message: error.message,
+        cause: cause instanceof Error
+          ? { message: cause.message, stack: cause.stack }
+          : cause,
+      }));
     },
   },
   pages: {
