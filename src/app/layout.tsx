@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Navbar from "@/components/Navbar";
+import Providers from "@/components/Providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,8 +23,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="font-sans antialiased">
-        <main className="mx-auto max-w-md px-4 pb-20 pt-6">{children}</main>
-        <Navbar />
+        <Providers>
+          <main className="mx-auto max-w-md px-4 pb-20 pt-6">{children}</main>
+          <Navbar />
+        </Providers>
       </body>
     </html>
   );
