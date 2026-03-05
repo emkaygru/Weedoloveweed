@@ -38,9 +38,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   logger: {
-    error(code, ...message) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    error(code: string, ...message: any[]) {
       const err = message[0];
-      const cause = err instanceof Error ? { message: err.message, stack: err.stack, cause: (err as any).cause } : err;
+      const cause = err instanceof Error
+        ? { message: err.message, stack: err.stack, cause: (err as any).cause }
+        : err;
       console.error("[auth][error]", code, JSON.stringify(cause));
     },
   },
