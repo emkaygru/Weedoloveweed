@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
+import FABWrapper from "@/components/FABWrapper";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({
         <Providers>
           <main className="mx-auto max-w-md px-4 pb-20 pt-6">{children}</main>
           <Navbar />
+          <FABWrapper />
         </Providers>
       </body>
     </html>

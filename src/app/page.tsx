@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import FeedCard from "@/components/FeedCard";
 import ThoughtCard from "@/components/ThoughtCard";
-import FABMenu from "@/components/FABMenu";
+import QuickPostBox from "@/components/QuickPostBox";
 import { prisma } from "@/lib/prisma";
 
 type FeedItem =
@@ -15,6 +15,7 @@ interface EntryData {
   method: string | null;
   review: string | null;
   gifUrl: string | null;
+  munchies: unknown;
   photos: unknown;
   createdAt: Date;
   user: { id: string; name: string | null; image: string | null };
@@ -34,6 +35,7 @@ interface ThoughtData {
   id: string;
   text: string;
   gifUrl: string | null;
+  anonymous: boolean;
   createdAt: Date;
   user: { id: string; name: string | null; image: string | null };
   strain: { name: string; type: string } | null;
@@ -110,6 +112,8 @@ export default async function FeedPage() {
         Weedoloveweed
       </h1>
 
+      <QuickPostBox userName={session.user.name ?? "Someone"} />
+
       {feed.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-4xl">🌿</p>
@@ -124,6 +128,7 @@ export default async function FeedPage() {
             if (item.type === "entry") {
               const e = item.data;
               const photos = e.photos as string[] | null;
+              const munchies = e.munchies as string[] | null;
               return (
                 <FeedCard
                   key={`entry-${e.id}`}
@@ -138,6 +143,7 @@ export default async function FeedPage() {
                   photoUrl={photos?.[0]}
                   gifUrl={e.gifUrl}
                   review={e.review}
+                  munchies={munchies}
                   createdAt={e.createdAt}
                   likeCount={e.likes.length}
                   liked={e.likes.some((l) => l.userId === userId)}
@@ -156,6 +162,7 @@ export default async function FeedPage() {
                   id={t.id}
                   userName={t.user.name ?? "Unknown"}
                   userImage={t.user.image}
+                  anonymous={t.anonymous}
                   text={t.text}
                   strainName={t.strain?.name}
                   strainType={t.strain?.type}
@@ -174,8 +181,6 @@ export default async function FeedPage() {
           })}
         </div>
       )}
-
-      <FABMenu />
     </div>
   );
 }

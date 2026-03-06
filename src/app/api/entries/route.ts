@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { strainId, rating, review, feelings, brand, dispensaryName, method, gifUrl, photos } = body;
+  const { strainId, rating, review, feelings, munchies, brand, dispensaryName, method, gifUrl, photos } = body;
 
   if (!strainId || !rating) {
     return NextResponse.json({ error: "Strain and rating required" }, { status: 400 });
@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       rating: Math.min(5, Math.max(1, Number(rating))),
       review: review?.trim() || null,
       feelings: feelings?.length ? feelings : null,
+      munchies: munchies?.length ? munchies : null,
       brand: brand?.trim() || null,
       method: method || null,
       gifUrl: gifUrl?.trim() || null,

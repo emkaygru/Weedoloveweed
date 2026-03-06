@@ -17,6 +17,7 @@ interface FeedCardProps {
   photoUrl?: string | null;
   gifUrl?: string | null;
   review?: string | null;
+  munchies?: string[] | null;
   createdAt: Date;
   likeCount: number;
   liked: boolean;
@@ -54,6 +55,7 @@ export default function FeedCard({
   photoUrl,
   gifUrl,
   review,
+  munchies,
   createdAt,
   likeCount,
   liked,
@@ -99,6 +101,20 @@ export default function FeedCard({
 
             {review && (
               <p className="mt-2 text-sm text-muted line-clamp-2">{review}</p>
+            )}
+
+            {munchies && munchies.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                <span className="text-xs text-muted">🍕</span>
+                {munchies.map((m) => (
+                  <span
+                    key={m}
+                    className="rounded-full bg-accent-yellow/20 px-2 py-0.5 text-xs font-medium text-accent-yellow"
+                  >
+                    {m}
+                  </span>
+                ))}
+              </div>
             )}
 
             <p className="mt-1 text-xs text-muted">{timeAgo(createdAt)}</p>

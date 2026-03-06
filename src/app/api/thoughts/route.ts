@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { text, strainId, gifUrl } = body;
+  const { text, strainId, gifUrl, anonymous } = body;
 
   if (!text?.trim()) {
     return NextResponse.json({ error: "Text is required" }, { status: 400 });
@@ -21,6 +21,7 @@ export async function POST(request: Request) {
       text: text.trim(),
       strainId: strainId || null,
       gifUrl: gifUrl?.trim() || null,
+      anonymous: anonymous === true,
     },
     include: {
       user: true,

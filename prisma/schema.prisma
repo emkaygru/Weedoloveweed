@@ -62,6 +62,7 @@ model User {
   thoughts  Thought[]
   likes     Like[]
   comments  Comment[]
+  tBreaks   TBreak[]
 }
 
 model Strain {
@@ -112,6 +113,7 @@ model Entry {
   rating       Int     // 1-5
   review       String? @db.Text
   feelings     Json?   // ["relaxed", "creative", "hungry"]
+  munchies     Json?   // ["chips", "pizza", "ice cream"]
   brand        String?
   photos       Json?   // ["https://...", "https://..."]
   method       String? // "joint", "edible", "pax", "concentrate", "bong", "pipe", "blunt", "dab"
@@ -133,6 +135,7 @@ model Thought {
   strainId  String?
   text      String   @db.Text
   gifUrl    String?
+  anonymous Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -186,4 +189,14 @@ model Bookmark {
   strain Strain @relation(fields: [strainId], references: [id])
 
   @@unique([userId, strainId, listType])
+}
+
+model TBreak {
+  id        String    @id @default(cuid())
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  goalDays  Int?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

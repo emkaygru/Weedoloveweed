@@ -6,6 +6,7 @@ interface ThoughtCardProps {
   id: string;
   userName: string;
   userImage?: string | null;
+  anonymous?: boolean;
   text: string;
   strainName?: string | null;
   strainType?: string | null;
@@ -39,6 +40,7 @@ export default function ThoughtCard({
   id,
   userName,
   userImage,
+  anonymous,
   text,
   strainName,
   strainType,
@@ -48,20 +50,23 @@ export default function ThoughtCard({
   liked,
   comments,
 }: ThoughtCardProps) {
+  const displayName = anonymous ? "A mysterious stoner 👁️" : userName;
+  const displayImage = anonymous ? null : userImage;
+
   return (
     <div className="rounded-2xl border border-accent-pink/20 bg-card p-4 shadow-sm">
       <div className="flex items-start gap-3">
         {/* Avatar */}
         <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-primary-light/30">
-          {userImage ? (
+          {displayImage ? (
             <img
-              src={userImage}
-              alt={userName}
+              src={displayImage}
+              alt={displayName}
               className="h-full w-full object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">
-              {userName.charAt(0).toUpperCase()}
+              {anonymous ? "👁️" : displayName.charAt(0).toUpperCase()}
             </div>
           )}
         </div>
@@ -69,7 +74,7 @@ export default function ThoughtCard({
         {/* Content */}
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-sm font-bold">{userName}</span>
+            <span className="text-sm font-bold">{displayName}</span>
             <span className="rounded-full bg-accent-pink/10 px-2 py-0.5 text-[10px] font-medium text-accent-pink">
               💭 high thought
             </span>

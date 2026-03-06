@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import StrainSearchInput from "./StrainSearchInput";
+import GifPicker from "./GifPicker";
 import { CONSUMPTION_METHODS, FEELING_OPTIONS } from "@/lib/terpenes";
 
 interface StrainResult {
@@ -11,6 +12,12 @@ interface StrainResult {
   type: string;
 }
 
+const MUNCHIE_SUGGESTIONS = [
+  "chips", "pizza", "ice cream", "popcorn", "gummy bears",
+  "mac & cheese", "cereal", "hot cheetos", "cookies", "fruit",
+  "ramen", "tacos", "grilled cheese", "chocolate", "candy",
+];
+
 export default function EntryForm() {
   const router = useRouter();
   const [strain, setStrain] = useState<StrainResult | null>(null);
@@ -18,6 +25,8 @@ export default function EntryForm() {
   const [method, setMethod] = useState("");
   const [review, setReview] = useState("");
   const [feelings, setFeelings] = useState<string[]>([]);
+  const [munchies, setMunchies] = useState<string[]>([]);
+  const [munchieInput, setMunchieInput] = useState("");
   const [dispensaryName, setDispensaryName] = useState("");
   const [brand, setBrand] = useState("");
   const [gifUrl, setGifUrl] = useState("");
@@ -27,6 +36,17 @@ export default function EntryForm() {
     setFeelings((prev) =>
       prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
     );
+  };
+
+  const addMunchie = (item: string) => {
+    const trimmed = item.trim();
+    if (!trimmed || munchies.includes(trimmed)) return;
+    setMunchies((prev) => [...prev, trimmed]);
+    setMunchieInput("");
+  };
+
+  const removeMunchie = (item: string) => {
+    setMunchies((prev) => prev.filter((m) => m !== item));
   };
 
   const submit = async () => {
@@ -43,6 +63,7 @@ export default function EntryForm() {
           method: method || null,
           review: review || null,
           feelings,
+          munchies,
           dispensaryName: dispensaryName || null,
           brand: brand || null,
           gifUrl: gifUrl || null,
@@ -149,6 +170,58 @@ export default function EntryForm() {
         </div>
       </div>
 
+      {/* Munchie Log */}
+      <div>
+        <label className="mb-1.5 block text-xs font-semibold uppercase text-muted">
+          Munchie Log 🍕 (optional)
+        </label>
+        {munchies.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {munchies.map((m) => (
+              <span
+                key={m}
+                className="flex items-center gap-1 rounded-full bg-accent-yellow/20 px-2.5 py-0.5 text-xs font-medium text-accent-yellow"
+              >
+                {m}
+                <button type="button" onClick={() => removeMunchie(m)} className="opacity-60 hover:opacity-100">
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={munchieInput}
+            onChange={(e) => setMunchieInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addMunchie(munchieInput))}
+            placeholder="What are you eating?"
+            className="flex-1 rounded-xl border border-card-border bg-card px-3 py-2 text-sm outline-none focus:border-primary"
+          />
+          <button
+            type="button"
+            onClick={() => addMunchie(munchieInput)}
+            disabled={!munchieInput.trim()}
+            className="rounded-xl bg-accent-yellow/20 px-3 py-2 text-sm font-semibold text-accent-yellow disabled:opacity-40"
+          >
+            Add
+          </button>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {MUNCHIE_SUGGESTIONS.filter((s) => !munchies.includes(s)).slice(0, 6).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => addMunchie(s)}
+              className="rounded-full bg-card-border/40 px-2.5 py-0.5 text-xs text-muted hover:text-foreground"
+            >
+              + {s}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Dispensary & Brand */}
       <div className="grid grid-cols-2 gap-3">
         <div>
@@ -177,26 +250,12 @@ export default function EntryForm() {
         </div>
       </div>
 
-      {/* GIF URL */}
+      {/* GIF Picker */}
       <div>
         <label className="mb-1.5 block text-xs font-semibold uppercase text-muted">
           Add a GIF (optional)
         </label>
-        <input
-          type="url"
-          value={gifUrl}
-          onChange={(e) => setGifUrl(e.target.value)}
-          placeholder="Paste a GIF URL..."
-          className="w-full rounded-xl border border-card-border bg-card px-4 py-3 text-sm outline-none focus:border-primary"
-        />
-        {gifUrl && (
-          <img
-            src={gifUrl}
-            alt="Preview"
-            className="mt-2 max-h-32 rounded-xl"
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-        )}
+        <GifPicker value={gifUrl} onChange={setGifUrl} />
       </div>
 
       {/* Submit */}
