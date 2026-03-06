@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { sendPushToAllExcept } from "@/lib/push";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -22,11 +23,15 @@ export async function POST(request: Request) {
       strainId: strainId || null,
       gifUrl: gifUrl?.trim() || null,
     },
-    include: {
-      user: true,
-      strain: true,
-    },
+    include: { user: true, strain: true },
   });
+
+  // Notify everyone else about the new thought
+  sendPushToAllExcept(session.user.id, {
+    title: "💭 New thought!",
+    body: `${session.user.name ?? "Someone"} posted: ${text.trim().slice(0, 80)}${text.length > 80 ? "…" : ""}`,
+    url: "/",
+  }).catch(() => {});
 
   return NextResponse.json(thought);
 }

@@ -21,4 +21,44 @@ body {
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── Page fade-in ───────────────────────────────────────── */
+@keyframes pageIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+main {
+  animation: pageIn 0.18s ease-out both;
+}
+
+/* ── Remove tap highlight everywhere ───────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Prevent 300ms tap delay ────────────────────────────── */
+button,
+a {
+  touch-action: manipulation;
+}
+
+/* ── Smooth scroll ──────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ── Input focus transitions ────────────────────────────── */
+input,
+textarea,
+select {
+  transition: border-color 0.15s ease;
+}
+
+/* ── Spin animation for PullToRefresh ───────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }

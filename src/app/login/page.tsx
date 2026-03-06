@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import LoginQuote from "@/components/LoginQuote";
 
 export default async function LoginPage() {
   const session = await auth();
@@ -8,9 +9,7 @@ export default async function LoginPage() {
 
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
-      <h1 className="bg-gradient-to-r from-primary via-sativa to-accent-pink bg-clip-text text-4xl font-extrabold text-transparent">
-        Weedoloveweed
-      </h1>
+      <LoginQuote />
       <p className="mt-2 text-muted">Cannabis diary for the crew</p>
 
       <div className="mt-8">

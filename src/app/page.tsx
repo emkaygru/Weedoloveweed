@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import FeedCard from "@/components/FeedCard";
 import ThoughtCard from "@/components/ThoughtCard";
 import FABMenu from "@/components/FABMenu";
+import PullToRefresh from "@/components/PullToRefresh";
 import { prisma } from "@/lib/prisma";
 
 type FeedItem =
@@ -106,10 +107,11 @@ export default async function FeedPage() {
 
   return (
     <div>
-      <h1 className="mb-4 bg-gradient-to-r from-primary to-hybrid bg-clip-text text-2xl font-extrabold text-transparent">
-        Weedoloveweed
+      <h1 className="mb-4 bg-gradient-to-r from-primary via-sativa to-hybrid bg-clip-text text-2xl font-extrabold text-transparent">
+        weedFeed 🌿
       </h1>
 
+      <PullToRefresh>
       {feed.length === 0 ? (
         <div className="mt-12 text-center">
           <p className="text-4xl">🌿</p>
@@ -174,6 +176,7 @@ export default async function FeedPage() {
           })}
         </div>
       )}
+      </PullToRefresh>
 
       <FABMenu />
     </div>

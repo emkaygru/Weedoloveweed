@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Navbar from "@/components/Navbar";
 import Providers from "@/components/Providers";
+import ServiceWorkerRegistrar from "@/components/ServiceWorkerRegistrar";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         <Providers>
+          <ServiceWorkerRegistrar />
           <main className="mx-auto max-w-md px-4 pb-20 pt-6">{children}</main>
           <Navbar />
         </Providers>

@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -27,10 +28,37 @@ export async function POST(request: Request) {
       text: text?.trim() || "",
       gifUrl: gifUrl?.trim() || null,
     },
-    include: {
-      user: true,
-    },
+    include: { user: true },
   });
+
+  // Notify post/thought author (not themselves)
+  if (entryId) {
+    const entry = await prisma.entry.findUnique({
+      where: { id: entryId },
+      select: { userId: true, strain: { select: { name: true } } },
+    });
+    if (entry && entry.userId !== session.user.id) {
+      sendPushToUser(entry.userId, {
+        title: "💬 New comment!",
+        body: `${session.user.name ?? "Someone"} commented on your ${entry.strain.name} review`,
+        url: "/",
+      }).catch(() => {});
+    }
+  }
+
+  if (thoughtId) {
+    const thought = await prisma.thought.findUnique({
+      where: { id: thoughtId },
+      select: { userId: true },
+    });
+    if (thought && thought.userId !== session.user.id) {
+      sendPushToUser(thought.userId, {
+        title: "💬 New comment!",
+        body: `${session.user.name ?? "Someone"} commented on your thought`,
+        url: "/",
+      }).catch(() => {});
+    }
+  }
 
   return NextResponse.json(comment);
 }

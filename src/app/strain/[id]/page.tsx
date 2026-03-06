@@ -5,6 +5,7 @@ import StrainBadge from "@/components/StrainBadge";
 import StarRating from "@/components/StarRating";
 import { TERPENE_INFO } from "@/lib/terpenes";
 import StrainActions from "@/components/StrainActions";
+import BackButton from "@/components/BackButton";
 
 export default async function StrainDetailPage({
   params,
@@ -44,6 +45,8 @@ export default async function StrainDetailPage({
 
   return (
     <div>
+      <BackButton label="Back" fallbackHref="/" className="mb-4" />
+
       <div className="rounded-2xl border border-card-border bg-card p-5">
         {/* Header */}
         <div className="flex items-start justify-between">

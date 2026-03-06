@@ -7,6 +7,7 @@ import MethodBadge from "@/components/MethodBadge";
 import LikeButton from "@/components/LikeButton";
 import CommentSection from "@/components/CommentSection";
 import Link from "next/link";
+import BackButton from "@/components/BackButton";
 
 export default async function EntryDetailPage({
   params,
@@ -40,6 +41,8 @@ export default async function EntryDetailPage({
 
   return (
     <div>
+      <BackButton label="Back" fallbackHref="/" className="mb-4" />
+
       <div className="rounded-2xl border border-card-border bg-card p-5">
         {/* Header */}
         <div className="flex items-center gap-3">

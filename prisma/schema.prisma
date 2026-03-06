@@ -53,15 +53,19 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  lastSeenFeed  DateTime  @default(now())
+  lastSeenFeed      DateTime  @default(now())
+  bookmarksPublic Boolean   @default(true)
 
-  accounts  Account[]
-  sessions  Session[]
-  entries   Entry[]
-  bookmarks Bookmark[]
-  thoughts  Thought[]
-  likes     Like[]
-  comments  Comment[]
+  accounts      Account[]
+  sessions      Session[]
+  entries       Entry[]
+  bookmarks     Bookmark[]
+  thoughts      Thought[]
+  likes         Like[]
+  comments      Comment[]
+  recipes       Recipe[]
+  savedRecipes      SavedRecipe[]
+  pushSubscriptions PushSubscription[]
 }
 
 model Strain {
@@ -186,4 +190,52 @@ model Bookmark {
   strain Strain @relation(fields: [strainId], references: [id])
 
   @@unique([userId, strainId, listType])
+}
+
+// ─── Baking / Recipes ────────────────────────────────────────────────
+
+model Recipe {
+  id           String  @id @default(cuid())
+  authorId     String?
+  title        String
+  category     String  // "edible" | "topical" | "tincture" | "capsule" | "other"
+  description  String? @db.Text
+  ingredients  Json    // string[]
+  instructions Json    // string[]
+  servings     Int?
+  mgThcTotal   Float?  // estimated total mg THC in batch
+  notes        String? @db.Text
+  isBuiltIn    Boolean @default(false) // seeded base recipes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author User?         @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  saves  SavedRecipe[]
+}
+
+model SavedRecipe {
+  userId   String
+  recipeId String
+
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([userId, recipeId])
+}
+
+// ─── Push Notifications ──────────────────────────────────────────────
+
+model PushSubscription {
+  id       String @id @default(cuid())
+  userId   String
+  endpoint String @unique
+  p256dh   String // public key
+  auth     String // auth secret
+
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

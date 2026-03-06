@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { sendPushToAllExcept } from "@/lib/push";
 
 export async function POST(request: Request) {
   const session = await auth();
@@ -44,11 +45,15 @@ export async function POST(request: Request) {
       gifUrl: gifUrl?.trim() || null,
       photos: photos?.length ? photos : null,
     },
-    include: {
-      strain: true,
-      user: true,
-    },
+    include: { strain: true, user: true },
   });
+
+  // Notify everyone else about the new review
+  sendPushToAllExcept(session.user.id, {
+    title: "🌿 New review!",
+    body: `${session.user.name ?? "Someone"} reviewed ${entry.strain.name}`,
+    url: "/",
+  }).catch(() => {});
 
   return NextResponse.json(entry);
 }

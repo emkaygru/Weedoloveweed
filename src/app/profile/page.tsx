@@ -1,18 +1,38 @@
 import { auth, signOut } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import PushToggle from "@/components/PushToggle";
+import BookmarksList from "@/components/BookmarksList";
 
 export default async function ProfilePage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [entryCount, bookmarkCount, uniqueStrains] = await Promise.all([
+  const [entryCount, uniqueStrains, user, bookmarks] = await Promise.all([
     prisma.entry.count({ where: { userId: session.user.id } }),
-    prisma.bookmark.count({ where: { userId: session.user.id } }),
     prisma.entry.findMany({
       where: { userId: session.user.id },
       select: { strainId: true },
       distinct: ["strainId"],
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { bookmarksPublic: true },
+    }),
+    prisma.bookmark.findMany({
+      where: { userId: session.user.id },
+      include: {
+        strain: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            thcPercent: true,
+            cbdPercent: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
     }),
   ]);
 
@@ -50,9 +70,21 @@ export default async function ProfilePage() {
           <p className="text-xs text-muted">Strains</p>
         </div>
         <div className="rounded-xl border border-card-border bg-card p-3 text-center">
-          <p className="text-2xl font-bold text-indica">{bookmarkCount}</p>
+          <p className="text-2xl font-bold text-indica">{bookmarks.length}</p>
           <p className="text-xs text-muted">Bookmarks</p>
         </div>
+      </div>
+
+      {/* Saved strains */}
+      <BookmarksList
+        initialBookmarks={bookmarks}
+        initialPublic={user?.bookmarksPublic ?? true}
+      />
+
+      {/* Notifications */}
+      <div className="mt-4 rounded-xl border border-card-border bg-card p-4">
+        <p className="mb-3 text-sm font-semibold">Notifications</p>
+        <PushToggle />
       </div>
 
       {/* Sign out */}

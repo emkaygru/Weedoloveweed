@@ -23,6 +23,9 @@ export default function StrainSearchInput({ onSelect, selectedStrain }: Props) {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [newType, setNewType] = useState("hybrid");
+  const [newThc, setNewThc] = useState("");
+  const [newCbd, setNewCbd] = useState("");
+  const [newTerpenes, setNewTerpenes] = useState("");
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -89,10 +92,30 @@ export default function StrainSearchInput({ onSelect, selectedStrain }: Props) {
 
   const handleCreateStrain = async () => {
     try {
+      // Parse terpenes: "myrcene 0.45, limonene 0.32" → { myrcene: 0.45, limonene: 0.32 }
+      let terpeneProfile: Record<string, number> | null = null;
+      if (newTerpenes.trim()) {
+        const entries = newTerpenes.split(",").map((s) => s.trim()).filter(Boolean);
+        const parsed: Record<string, number> = {};
+        for (const entry of entries) {
+          const parts = entry.split(/\s+/);
+          const name = parts[0].toLowerCase();
+          const pct = parseFloat(parts[1] ?? "");
+          if (name) parsed[name] = isNaN(pct) ? 0 : pct;
+        }
+        if (Object.keys(parsed).length > 0) terpeneProfile = parsed;
+      }
+
       const res = await fetch("/api/strains/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: query.trim(), type: newType }),
+        body: JSON.stringify({
+          name: query.trim(),
+          type: newType,
+          thcPercent: newThc ? parseFloat(newThc) : null,
+          cbdPercent: newCbd ? parseFloat(newCbd) : null,
+          terpeneProfile,
+        }),
       });
       const strain = await res.json();
       handleSelectStrain(strain);
@@ -178,28 +201,79 @@ export default function StrainSearchInput({ onSelect, selectedStrain }: Props) {
                   + Create &ldquo;{query}&rdquo; as new strain
                 </button>
               ) : (
-                <div className="space-y-2 p-2">
-                  <p className="text-xs font-semibold">Type for &ldquo;{query}&rdquo;:</p>
-                  <div className="flex gap-2">
-                    {["indica", "sativa", "hybrid"].map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => setNewType(t)}
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
-                          newType === t
-                            ? t === "indica"
-                              ? "bg-indica text-white"
-                              : t === "sativa"
-                                ? "bg-sativa text-white"
-                                : "bg-hybrid text-white"
-                            : "bg-card-border text-muted"
-                        }`}
-                      >
-                        {t}
-                      </button>
-                    ))}
+                <div className="space-y-3 p-2">
+                  <p className="text-xs font-semibold">Add &ldquo;{query}&rdquo; to the database:</p>
+
+                  {/* Type selector */}
+                  <div>
+                    <p className="mb-1.5 text-xs text-muted">Type</p>
+                    <div className="flex gap-2">
+                      {["indica", "sativa", "hybrid"].map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setNewType(t)}
+                          className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${
+                            newType === t
+                              ? t === "indica"
+                                ? "bg-indica text-white"
+                                : t === "sativa"
+                                  ? "bg-sativa text-white"
+                                  : "bg-hybrid text-white"
+                              : "bg-card-border text-muted"
+                          }`}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* THC / CBD */}
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <label className="mb-1 block text-xs text-muted">THC %</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={newThc}
+                        onChange={(e) => setNewThc(e.target.value)}
+                        placeholder="e.g. 24.5"
+                        className="w-full rounded-lg border border-card-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="mb-1 block text-xs text-muted">CBD %</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        value={newCbd}
+                        onChange={(e) => setNewCbd(e.target.value)}
+                        placeholder="e.g. 0.1"
+                        className="w-full rounded-lg border border-card-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Terpenes */}
+                  <div>
+                    <label className="mb-1 block text-xs text-muted">
+                      Terpenes{" "}
+                      <span className="font-normal opacity-70">(optional — e.g. myrcene 0.45, limonene 0.3)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={newTerpenes}
+                      onChange={(e) => setNewTerpenes(e.target.value)}
+                      placeholder="myrcene 0.45, limonene 0.3, caryophyllene 0.2"
+                      className="w-full rounded-lg border border-card-border bg-background px-3 py-1.5 text-sm outline-none focus:border-primary"
+                    />
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleCreateStrain}
