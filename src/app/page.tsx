@@ -2,7 +2,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import FeedCard from "@/components/FeedCard";
 import ThoughtCard from "@/components/ThoughtCard";
-import FABMenu from "@/components/FABMenu";
+import QuickPostBox from "@/components/QuickPostBox";
 import PullToRefresh from "@/components/PullToRefresh";
 import { prisma } from "@/lib/prisma";
 
@@ -16,6 +16,7 @@ interface EntryData {
   method: string | null;
   review: string | null;
   gifUrl: string | null;
+  munchies: unknown;
   photos: unknown;
   createdAt: Date;
   user: { id: string; name: string | null; image: string | null };
@@ -35,6 +36,7 @@ interface ThoughtData {
   id: string;
   text: string;
   gifUrl: string | null;
+  anonymous: boolean;
   createdAt: Date;
   user: { id: string; name: string | null; image: string | null };
   strain: { name: string; type: string } | null;
@@ -111,74 +113,77 @@ export default async function FeedPage() {
         weedFeed 🌿
       </h1>
 
-      <PullToRefresh>
-      {feed.length === 0 ? (
-        <div className="mt-12 text-center">
-          <p className="text-4xl">🌿</p>
-          <p className="mt-2 font-semibold text-foreground">Nothing here yet</p>
-          <p className="text-sm text-muted">
-            Be the first to log a session!
-          </p>
-        </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {feed.map((item) => {
-            if (item.type === "entry") {
-              const e = item.data;
-              const photos = e.photos as string[] | null;
-              return (
-                <FeedCard
-                  key={`entry-${e.id}`}
-                  id={e.id}
-                  userName={e.user.name ?? "Unknown"}
-                  userImage={e.user.image}
-                  strainName={e.strain.name}
-                  strainType={e.strain.type}
-                  rating={e.rating}
-                  method={e.method}
-                  dispensaryName={e.dispensary?.name}
-                  photoUrl={photos?.[0]}
-                  gifUrl={e.gifUrl}
-                  review={e.review}
-                  createdAt={e.createdAt}
-                  likeCount={e.likes.length}
-                  liked={e.likes.some((l) => l.userId === userId)}
-                  comments={e.comments.map((c) => ({
-                    ...c,
-                    createdAt: c.createdAt.toISOString(),
-                  }))}
-                  currentUserId={userId}
-                />
-              );
-            } else {
-              const t = item.data;
-              return (
-                <ThoughtCard
-                  key={`thought-${t.id}`}
-                  id={t.id}
-                  userName={t.user.name ?? "Unknown"}
-                  userImage={t.user.image}
-                  text={t.text}
-                  strainName={t.strain?.name}
-                  strainType={t.strain?.type}
-                  gifUrl={t.gifUrl}
-                  createdAt={t.createdAt}
-                  likeCount={t.likes.length}
-                  liked={t.likes.some((l) => l.userId === userId)}
-                  comments={t.comments.map((c) => ({
-                    ...c,
-                    createdAt: c.createdAt.toISOString(),
-                  }))}
-                  currentUserId={userId}
-                />
-              );
-            }
-          })}
-        </div>
-      )}
-      </PullToRefresh>
+      <QuickPostBox userName={session.user.name ?? "Someone"} />
 
-      <FABMenu />
+      <PullToRefresh>
+        {feed.length === 0 ? (
+          <div className="mt-12 text-center">
+            <p className="text-4xl">🌿</p>
+            <p className="mt-2 font-semibold text-foreground">Nothing here yet</p>
+            <p className="text-sm text-muted">
+              Be the first to log a session!
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3">
+            {feed.map((item) => {
+              if (item.type === "entry") {
+                const e = item.data;
+                const photos = e.photos as string[] | null;
+                const munchies = e.munchies as string[] | null;
+                return (
+                  <FeedCard
+                    key={`entry-${e.id}`}
+                    id={e.id}
+                    userName={e.user.name ?? "Unknown"}
+                    userImage={e.user.image}
+                    strainName={e.strain.name}
+                    strainType={e.strain.type}
+                    rating={e.rating}
+                    method={e.method}
+                    dispensaryName={e.dispensary?.name}
+                    photoUrl={photos?.[0]}
+                    gifUrl={e.gifUrl}
+                    review={e.review}
+                    munchies={munchies}
+                    createdAt={e.createdAt}
+                    likeCount={e.likes.length}
+                    liked={e.likes.some((l) => l.userId === userId)}
+                    comments={e.comments.map((c) => ({
+                      ...c,
+                      createdAt: c.createdAt.toISOString(),
+                    }))}
+                    currentUserId={userId}
+                  />
+                );
+              } else {
+                const t = item.data;
+                return (
+                  <ThoughtCard
+                    key={`thought-${t.id}`}
+                    id={t.id}
+                    userName={t.user.name ?? "Unknown"}
+                    userImage={t.user.image}
+                    anonymous={t.anonymous}
+                    text={t.text}
+                    strainName={t.strain?.name}
+                    strainType={t.strain?.type}
+                    gifUrl={t.gifUrl}
+                    createdAt={t.createdAt}
+                    likeCount={t.likes.length}
+                    liked={t.likes.some((l) => l.userId === userId)}
+                    comments={t.comments.map((c) => ({
+                      ...c,
+                      createdAt: c.createdAt.toISOString(),
+                    }))}
+                    currentUserId={userId}
+                  />
+                );
+              }
+            })}
+          </div>
+        )}
+      </PullToRefresh>
     </div>
   );
 }

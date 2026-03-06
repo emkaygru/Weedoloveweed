@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { redirect, notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import Link from "next/link";
 import StrainBadge from "@/components/StrainBadge";
 import StarRating from "@/components/StarRating";
 import { TERPENE_INFO } from "@/lib/terpenes";
@@ -29,6 +30,32 @@ export default async function StrainDetailPage({
   });
 
   if (!strain) notFound();
+
+  // Strain compatibility: find strains co-logged by users who also logged this strain
+  const userIds = [...new Set(strain.entries.map((e) => e.userId))];
+  const compatibleStrains =
+    userIds.length > 0
+      ? await prisma.entry.groupBy({
+          by: ["strainId"],
+          where: { userId: { in: userIds }, strainId: { not: id } },
+          _count: { strainId: true },
+          orderBy: { _count: { strainId: "desc" } },
+          take: 5,
+        })
+      : [];
+
+  const compatibleStrainDetails =
+    compatibleStrains.length > 0
+      ? await prisma.strain.findMany({
+          where: { id: { in: compatibleStrains.map((s) => s.strainId) } },
+          select: { id: true, name: true, type: true },
+        })
+      : [];
+
+  // Reorder to match compatibility ranking
+  const compatibleOrdered = compatibleStrains
+    .map((cs) => compatibleStrainDetails.find((s) => s.id === cs.strainId))
+    .filter(Boolean) as { id: string; name: string; type: string }[];
 
   const terpenes = strain.terpeneProfile as Record<string, number> | null;
   const effects = strain.effects as string[] | null;
@@ -213,6 +240,27 @@ export default async function StrainDetailPage({
                   <p className="mt-1 text-sm text-muted">{entry.review}</p>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Strain compatibility */}
+      {compatibleOrdered.length > 0 && (
+        <div className="mt-4">
+          <h3 className="mb-2 text-sm font-semibold">
+            Users who loved this also enjoyed 💚
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {compatibleOrdered.map((s) => (
+              <Link
+                key={s.id}
+                href={`/strain/${s.id}`}
+                className="flex items-center gap-1.5 rounded-xl border border-card-border bg-card px-3 py-2 text-sm transition-colors hover:border-primary/30"
+              >
+                <span className="font-medium">{s.name}</span>
+                <StrainBadge type={s.type} />
+              </Link>
             ))}
           </div>
         </div>

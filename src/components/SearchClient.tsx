@@ -4,6 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { TERPENE_INFO } from "@/lib/terpenes";
 
+const STRAIN_TYPES = ["indica", "sativa", "hybrid"] as const;
+type StrainType = (typeof STRAIN_TYPES)[number];
+
 interface StrainResult {
   id?: string;
   name: string;
@@ -27,6 +30,12 @@ export default function SearchClient({ userId }: { userId: string }) {
   const [selectedStrain, setSelectedStrain] = useState<StrainResult | null>(null);
   const [bookmarking, setBookmarking] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  // Add new strain inline
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newStrainName, setNewStrainName] = useState("");
+  const [newStrainType, setNewStrainType] = useState<StrainType>("hybrid");
+  const [addingStrain, setAddingStrain] = useState(false);
 
   useEffect(() => {
     if (query.length < 2) {
@@ -104,6 +113,29 @@ export default function SearchClient({ userId }: { userId: string }) {
       // Error
     } finally {
       setBookmarking(false);
+    }
+  };
+
+  const addNewStrain = async () => {
+    if (!newStrainName.trim() || addingStrain) return;
+    setAddingStrain(true);
+    try {
+      const res = await fetch("/api/strains/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newStrainName.trim(), type: newStrainType }),
+      });
+      const created = await res.json();
+      if (created.id) {
+        setSelectedStrain(created);
+        setShowAddForm(false);
+        setNewStrainName("");
+        setQuery(created.name);
+      }
+    } catch {
+      // error
+    } finally {
+      setAddingStrain(false);
     }
   };
 
@@ -314,26 +346,99 @@ export default function SearchClient({ userId }: { userId: string }) {
         </div>
       )}
 
-      {/* Empty state */}
+      {/* Empty state — no results */}
       {!loading && query.length >= 2 && results.length === 0 && !selectedStrain && (
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center">
           <p className="text-2xl">🔍</p>
           <p className="mt-2 text-sm text-muted">
             No strains found for &ldquo;{query}&rdquo;
           </p>
-          <p className="mt-1 text-xs text-muted">
-            Try a different name or create a new strain when logging
-          </p>
+          <button
+            onClick={() => {
+              setNewStrainName(query);
+              setShowAddForm(true);
+            }}
+            className="mt-3 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-white"
+          >
+            + Add &ldquo;{query}&rdquo; to the database
+          </button>
         </div>
       )}
 
-      {/* Hint when empty */}
+      {/* Hint when empty + Add a New Strain card */}
       {query.length < 2 && !selectedStrain && (
-        <div className="mt-8 text-center">
-          <p className="text-4xl">🌿</p>
-          <p className="mt-2 text-sm text-muted">
-            Search for any strain to see details, terpene profiles, and more
-          </p>
+        <div className="mt-6 space-y-4">
+          <div className="text-center">
+            <p className="text-4xl">🌿</p>
+            <p className="mt-2 text-sm text-muted">
+              Search for any strain to see details, terpene profiles, and more
+            </p>
+          </div>
+
+          {/* Add a new strain */}
+          {!showAddForm ? (
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex w-full items-center justify-between rounded-2xl border border-dashed border-primary/40 bg-primary/5 px-4 py-3.5 text-left transition-colors hover:border-primary/70 hover:bg-primary/10"
+            >
+              <div>
+                <p className="text-sm font-semibold text-primary">Add a New Strain</p>
+                <p className="text-xs text-muted">
+                  Can&apos;t find what you&apos;re looking for? Add it yourself.
+                </p>
+              </div>
+              <span className="text-2xl text-primary">+</span>
+            </button>
+          ) : null}
+        </div>
+      )}
+
+      {/* Add a new strain inline form */}
+      {showAddForm && (
+        <div className="mt-4 rounded-2xl border border-primary/20 bg-card p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="font-semibold">Add a New Strain</h3>
+            <button
+              onClick={() => setShowAddForm(false)}
+              className="text-sm text-muted hover:text-foreground"
+            >
+              Cancel
+            </button>
+          </div>
+          <input
+            type="text"
+            value={newStrainName}
+            onChange={(e) => setNewStrainName(e.target.value)}
+            placeholder="Strain name..."
+            className="w-full rounded-xl border border-card-border bg-background px-3 py-2.5 text-sm outline-none focus:border-primary"
+            autoFocus
+          />
+          <div className="mt-3 flex gap-2">
+            {STRAIN_TYPES.map((t) => (
+              <button
+                key={t}
+                onClick={() => setNewStrainType(t)}
+                className={`flex-1 rounded-xl py-2 text-xs font-semibold capitalize transition-colors ${
+                  newStrainType === t
+                    ? t === "indica"
+                      ? "bg-indica text-white"
+                      : t === "sativa"
+                        ? "bg-sativa text-white"
+                        : "bg-hybrid text-white"
+                    : "bg-card-border/50 text-muted"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={addNewStrain}
+            disabled={!newStrainName.trim() || addingStrain}
+            className="mt-3 w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white disabled:opacity-40"
+          >
+            {addingStrain ? "Adding..." : "Add Strain"}
+          </button>
         </div>
       )}
     </div>

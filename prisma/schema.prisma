@@ -56,16 +56,17 @@ model User {
   lastSeenFeed      DateTime  @default(now())
   bookmarksPublic Boolean   @default(true)
 
-  accounts      Account[]
-  sessions      Session[]
-  entries       Entry[]
-  bookmarks     Bookmark[]
-  thoughts      Thought[]
-  likes         Like[]
-  comments      Comment[]
-  recipes       Recipe[]
+  accounts          Account[]
+  sessions          Session[]
+  entries           Entry[]
+  bookmarks         Bookmark[]
+  thoughts          Thought[]
+  likes             Like[]
+  comments          Comment[]
+  recipes           Recipe[]
   savedRecipes      SavedRecipe[]
   pushSubscriptions PushSubscription[]
+  tBreaks           TBreak[]
 }
 
 model Strain {
@@ -116,6 +117,7 @@ model Entry {
   rating       Int     // 1-5
   review       String? @db.Text
   feelings     Json?   // ["relaxed", "creative", "hungry"]
+  munchies     Json?   // ["chips", "pizza", "ice cream"]
   brand        String?
   photos       Json?   // ["https://...", "https://..."]
   method       String? // "joint", "edible", "pax", "concentrate", "bong", "pipe", "blunt", "dab"
@@ -137,6 +139,7 @@ model Thought {
   strainId  String?
   text      String   @db.Text
   gifUrl    String?
+  anonymous Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -236,6 +239,18 @@ model PushSubscription {
   auth     String // auth secret
 
   createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ─── T-Break ─────────────────────────────────────────────────────────
+
+model TBreak {
+  id        String    @id @default(cuid())
+  userId    String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  goalDays  Int?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
