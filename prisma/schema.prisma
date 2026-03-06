@@ -155,15 +155,19 @@ model Like {
   userId    String
   entryId   String?
   thoughtId String?
+  commentId String?
+  emoji     String   @default("❤️")
 
   createdAt DateTime @default(now())
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   entry   Entry?   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   thought Thought? @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
+  comment Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@unique([userId, entryId])
   @@unique([userId, thoughtId])
+  @@unique([userId, commentId])
 }
 
 model Comment {
@@ -171,14 +175,18 @@ model Comment {
   userId    String
   entryId   String?
   thoughtId String?
+  parentId  String?
   text      String  @db.Text
   gifUrl    String?
 
   createdAt DateTime @default(now())
 
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entry   Entry?   @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  thought Thought? @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entry   Entry?    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  thought Thought?  @relation(fields: [thoughtId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies Comment[] @relation("CommentReplies")
+  likes   Like[]
 }
 
 model Bookmark {
