@@ -25,9 +25,20 @@ export default async function EntryDetailPage({
       user: true,
       strain: true,
       dispensary: true,
-      likes: { select: { userId: true } },
+      likes: { select: { userId: true, emoji: true } },
       comments: {
-        include: { user: { select: { name: true, image: true } } },
+        where: { parentId: null },
+        include: {
+          user: { select: { name: true, image: true } },
+          likes: { select: { userId: true } },
+          replies: {
+            include: {
+              user: { select: { name: true, image: true } },
+              likes: { select: { userId: true } },
+            },
+            orderBy: { createdAt: "asc" },
+          },
+        },
         orderBy: { createdAt: "asc" },
       },
     },
@@ -142,13 +153,23 @@ export default async function EntryDetailPage({
             entryId={entry.id}
             initialLiked={entry.likes.some((l) => l.userId === userId)}
             initialCount={entry.likes.length}
+            initialEmoji={entry.likes.find((l) => l.userId === userId)?.emoji ?? null}
+            allReactions={entry.likes}
+            currentUserId={userId}
           />
           <CommentSection
             entryId={entry.id}
             initialComments={entry.comments.map((c) => ({
               ...c,
               createdAt: c.createdAt.toISOString(),
+              likes: c.likes,
+              replies: c.replies.map((r) => ({
+                ...r,
+                createdAt: r.createdAt.toISOString(),
+                likes: r.likes,
+              })),
             }))}
+            currentUserId={userId}
           />
         </div>
       </div>
