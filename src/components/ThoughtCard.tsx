@@ -14,12 +14,23 @@ interface ThoughtCardProps {
   createdAt: Date;
   likeCount: number;
   liked: boolean;
+  userReaction?: string | null;
+  allReactions?: { userId: string; emoji: string }[];
   comments: Array<{
     id: string;
     text: string;
     gifUrl?: string | null;
     createdAt: string;
     user: { name: string | null; image: string | null };
+    likes: { userId: string }[];
+    replies: Array<{
+      id: string;
+      text: string;
+      gifUrl?: string | null;
+      createdAt: string;
+      user: { name: string | null; image: string | null };
+      likes: { userId: string }[];
+    }>;
   }>;
   currentUserId: string;
 }
@@ -48,7 +59,10 @@ export default function ThoughtCard({
   createdAt,
   likeCount,
   liked,
+  userReaction,
+  allReactions = [],
   comments,
+  currentUserId,
 }: ThoughtCardProps) {
   const displayName = anonymous ? "A mysterious stoner 👁️" : userName;
   const displayImage = anonymous ? null : userImage;
@@ -59,11 +73,7 @@ export default function ThoughtCard({
         {/* Avatar */}
         <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-primary-light/30">
           {displayImage ? (
-            <img
-              src={displayImage}
-              alt={displayName}
-              className="h-full w-full object-cover"
-            />
+            <img src={displayImage} alt={displayName} className="h-full w-full object-cover" />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">
               {anonymous ? "👁️" : displayName.charAt(0).toUpperCase()}
@@ -83,9 +93,7 @@ export default function ThoughtCard({
           {strainName && (
             <div className="mt-1 flex items-center gap-1.5">
               <span className="text-xs text-muted">smoking</span>
-              <span className="text-xs font-semibold text-primary">
-                {strainName}
-              </span>
+              <span className="text-xs font-semibold text-primary">{strainName}</span>
               {strainType && <StrainBadge type={strainType} />}
             </div>
           )}
@@ -93,11 +101,7 @@ export default function ThoughtCard({
           <p className="mt-2 text-sm leading-relaxed">{text}</p>
 
           {gifUrl && (
-            <img
-              src={gifUrl}
-              alt="GIF"
-              className="mt-2 max-h-48 rounded-xl"
-            />
+            <img src={gifUrl} alt="GIF" className="mt-2 max-h-48 rounded-xl" />
           )}
 
           <p className="mt-2 text-xs text-muted">{timeAgo(createdAt)}</p>
@@ -106,18 +110,20 @@ export default function ThoughtCard({
 
       {/* Like & Comment */}
       <div className="mt-3 border-t border-card-border pt-2">
-        <div className="flex items-center gap-3">
-          <LikeButton thoughtId={id} initialLiked={liked} initialCount={likeCount} />
-          <span className="text-xs text-muted">
-            {comments.length > 0 ? `${comments.length} comment${comments.length === 1 ? "" : "s"}` : ""}
-          </span>
+        <div className="flex items-center gap-1">
+          <LikeButton
+            thoughtId={id}
+            initialLiked={liked}
+            initialCount={likeCount}
+            initialEmoji={userReaction}
+            allReactions={allReactions}
+            currentUserId={currentUserId}
+          />
         </div>
         <CommentSection
           thoughtId={id}
-          initialComments={comments.map((c) => ({
-            ...c,
-            createdAt: c.createdAt.toString(),
-          }))}
+          initialComments={comments}
+          currentUserId={currentUserId}
         />
       </div>
     </div>

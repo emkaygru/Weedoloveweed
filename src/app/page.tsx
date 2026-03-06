@@ -9,6 +9,23 @@ type FeedItem =
   | { type: "entry"; createdAt: Date; data: EntryData }
   | { type: "thought"; createdAt: Date; data: ThoughtData };
 
+interface CommentData {
+  id: string;
+  text: string;
+  gifUrl?: string | null;
+  createdAt: Date;
+  user: { name: string | null; image: string | null };
+  likes: { userId: string }[];
+  replies: {
+    id: string;
+    text: string;
+    gifUrl?: string | null;
+    createdAt: Date;
+    user: { name: string | null; image: string | null };
+    likes: { userId: string }[];
+  }[];
+}
+
 interface EntryData {
   id: string;
   rating: number;
@@ -21,14 +38,8 @@ interface EntryData {
   user: { id: string; name: string | null; image: string | null };
   strain: { name: string; type: string };
   dispensary: { name: string } | null;
-  likes: { userId: string }[];
-  comments: {
-    id: string;
-    text: string;
-    gifUrl: string | null;
-    createdAt: Date;
-    user: { name: string | null; image: string | null };
-  }[];
+  likes: { userId: string; emoji: string }[];
+  comments: CommentData[];
 }
 
 interface ThoughtData {
@@ -39,15 +50,21 @@ interface ThoughtData {
   createdAt: Date;
   user: { id: string; name: string | null; image: string | null };
   strain: { name: string; type: string } | null;
-  likes: { userId: string }[];
-  comments: {
-    id: string;
-    text: string;
-    gifUrl: string | null;
-    createdAt: Date;
-    user: { name: string | null; image: string | null };
-  }[];
+  likes: { userId: string; emoji: string }[];
+  comments: CommentData[];
 }
+
+const commentInclude = {
+  user: { select: { name: true, image: true } },
+  likes: { select: { userId: true } },
+  replies: {
+    include: {
+      user: { select: { name: true, image: true } },
+      likes: { select: { userId: true } },
+    },
+    orderBy: { createdAt: "asc" as const },
+  },
+};
 
 export default async function FeedPage() {
   const session = await auth();
@@ -68,9 +85,10 @@ export default async function FeedPage() {
         user: true,
         strain: true,
         dispensary: true,
-        likes: { select: { userId: true } },
+        likes: { select: { userId: true, emoji: true } },
         comments: {
-          include: { user: { select: { name: true, image: true } } },
+          where: { parentId: null },
+          include: commentInclude,
           orderBy: { createdAt: "asc" },
         },
       },
@@ -81,9 +99,10 @@ export default async function FeedPage() {
       include: {
         user: true,
         strain: true,
-        likes: { select: { userId: true } },
+        likes: { select: { userId: true, emoji: true } },
         comments: {
-          include: { user: { select: { name: true, image: true } } },
+          where: { parentId: null },
+          include: commentInclude,
           orderBy: { createdAt: "asc" },
         },
       },
@@ -147,9 +166,15 @@ export default async function FeedPage() {
                   createdAt={e.createdAt}
                   likeCount={e.likes.length}
                   liked={e.likes.some((l) => l.userId === userId)}
+                  userReaction={e.likes.find((l) => l.userId === userId)?.emoji ?? null}
+                  allReactions={e.likes}
                   comments={e.comments.map((c) => ({
                     ...c,
                     createdAt: c.createdAt.toISOString(),
+                    replies: c.replies.map((r) => ({
+                      ...r,
+                      createdAt: r.createdAt.toISOString(),
+                    })),
                   }))}
                   currentUserId={userId}
                 />
@@ -170,9 +195,15 @@ export default async function FeedPage() {
                   createdAt={t.createdAt}
                   likeCount={t.likes.length}
                   liked={t.likes.some((l) => l.userId === userId)}
+                  userReaction={t.likes.find((l) => l.userId === userId)?.emoji ?? null}
+                  allReactions={t.likes}
                   comments={t.comments.map((c) => ({
                     ...c,
                     createdAt: c.createdAt.toISOString(),
+                    replies: c.replies.map((r) => ({
+                      ...r,
+                      createdAt: r.createdAt.toISOString(),
+                    })),
                   }))}
                   currentUserId={userId}
                 />

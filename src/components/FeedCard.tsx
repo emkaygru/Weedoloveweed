@@ -21,12 +21,23 @@ interface FeedCardProps {
   createdAt: Date;
   likeCount: number;
   liked: boolean;
+  userReaction?: string | null;
+  allReactions?: { userId: string; emoji: string }[];
   comments: Array<{
     id: string;
     text: string;
     gifUrl?: string | null;
     createdAt: string;
     user: { name: string | null; image: string | null };
+    likes: { userId: string }[];
+    replies: Array<{
+      id: string;
+      text: string;
+      gifUrl?: string | null;
+      createdAt: string;
+      user: { name: string | null; image: string | null };
+      likes: { userId: string }[];
+    }>;
   }>;
   currentUserId: string;
 }
@@ -59,7 +70,10 @@ export default function FeedCard({
   createdAt,
   likeCount,
   liked,
+  userReaction,
+  allReactions = [],
   comments,
+  currentUserId,
 }: FeedCardProps) {
   return (
     <div className="rounded-2xl border border-card-border bg-card p-4 shadow-sm">
@@ -68,11 +82,7 @@ export default function FeedCard({
           {/* Avatar */}
           <div className="h-10 w-10 flex-shrink-0 overflow-hidden rounded-full bg-primary-light/30">
             {userImage ? (
-              <img
-                src={userImage}
-                alt={userName}
-                className="h-full w-full object-cover"
-              />
+              <img src={userImage} alt={userName} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center text-lg font-bold text-primary">
                 {userName.charAt(0).toUpperCase()}
@@ -93,9 +103,7 @@ export default function FeedCard({
               <StarRating rating={rating} />
               {method && <MethodBadge method={method} />}
               {dispensaryName && (
-                <span className="text-xs text-muted">
-                  @ {dispensaryName}
-                </span>
+                <span className="text-xs text-muted">@ {dispensaryName}</span>
               )}
             </div>
 
@@ -123,11 +131,7 @@ export default function FeedCard({
           {/* Photo thumbnail */}
           {photoUrl && (
             <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg">
-              <img
-                src={photoUrl}
-                alt={strainName}
-                className="h-full w-full object-cover"
-              />
+              <img src={photoUrl} alt={strainName} className="h-full w-full object-cover" />
             </div>
           )}
         </div>
@@ -135,29 +139,27 @@ export default function FeedCard({
         {/* GIF */}
         {gifUrl && (
           <div className="mt-3">
-            <img
-              src={gifUrl}
-              alt="GIF"
-              className="max-h-48 w-full rounded-xl object-cover"
-            />
+            <img src={gifUrl} alt="GIF" className="max-h-48 w-full rounded-xl object-cover" />
           </div>
         )}
       </Link>
 
       {/* Like & Comment */}
       <div className="mt-3 border-t border-card-border pt-2">
-        <div className="flex items-center gap-3">
-          <LikeButton entryId={id} initialLiked={liked} initialCount={likeCount} />
-          <span className="text-xs text-muted">
-            {comments.length > 0 ? `${comments.length} comment${comments.length === 1 ? "" : "s"}` : ""}
-          </span>
+        <div className="flex items-center gap-1">
+          <LikeButton
+            entryId={id}
+            initialLiked={liked}
+            initialCount={likeCount}
+            initialEmoji={userReaction}
+            allReactions={allReactions}
+            currentUserId={currentUserId}
+          />
         </div>
         <CommentSection
           entryId={id}
-          initialComments={comments.map((c) => ({
-            ...c,
-            createdAt: c.createdAt.toString(),
-          }))}
+          initialComments={comments}
+          currentUserId={currentUserId}
         />
       </div>
     </div>

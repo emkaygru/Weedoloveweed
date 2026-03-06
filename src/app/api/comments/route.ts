@@ -9,10 +9,10 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { entryId, thoughtId, text, gifUrl } = body;
+  const { entryId, thoughtId, parentId, text, gifUrl } = body;
 
-  if (!entryId && !thoughtId) {
-    return NextResponse.json({ error: "entryId or thoughtId required" }, { status: 400 });
+  if (!entryId && !thoughtId && !parentId) {
+    return NextResponse.json({ error: "entryId, thoughtId, or parentId required" }, { status: 400 });
   }
 
   if (!text?.trim() && !gifUrl?.trim()) {
@@ -24,11 +24,20 @@ export async function POST(request: Request) {
       userId: session.user.id,
       entryId: entryId || null,
       thoughtId: thoughtId || null,
+      parentId: parentId || null,
       text: text?.trim() || "",
       gifUrl: gifUrl?.trim() || null,
     },
     include: {
-      user: true,
+      user: { select: { name: true, image: true } },
+      likes: { select: { userId: true } },
+      replies: {
+        include: {
+          user: { select: { name: true, image: true } },
+          likes: { select: { userId: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      },
     },
   });
 
