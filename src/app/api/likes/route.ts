@@ -10,61 +10,83 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { entryId, thoughtId } = body;
+  const { entryId, thoughtId, commentId, emoji = "❤️" } = body;
 
-  if (!entryId && !thoughtId) {
-    return NextResponse.json({ error: "entryId or thoughtId required" }, { status: 400 });
+  if (!entryId && !thoughtId && !commentId) {
+    return NextResponse.json({ error: "entryId, thoughtId, or commentId required" }, { status: 400 });
   }
+
+  const userId = session.user.id;
 
   if (entryId) {
     const existing = await prisma.like.findUnique({
-      where: { userId_entryId: { userId: session.user.id, entryId } },
+      where: { userId_entryId: { userId, entryId } },
     });
     if (existing) {
-      await prisma.like.delete({ where: { id: existing.id } });
-      return NextResponse.json({ liked: false });
+      if (existing.emoji === emoji) {
+        await prisma.like.delete({ where: { id: existing.id } });
+        return NextResponse.json({ liked: false, emoji: null });
+      }
+      const updated = await prisma.like.update({ where: { id: existing.id }, data: { emoji } });
+      return NextResponse.json({ liked: true, emoji: updated.emoji });
     }
-    await prisma.like.create({ data: { userId: session.user.id, entryId } });
+    const created = await prisma.like.create({ data: { userId, entryId, emoji } });
 
     // Notify the post author (not themselves)
     const entry = await prisma.entry.findUnique({
       where: { id: entryId },
       select: { userId: true, strain: { select: { name: true } } },
     });
-    if (entry && entry.userId !== session.user.id) {
+    if (entry && entry.userId !== userId) {
       sendPushToUser(entry.userId, {
         title: "💚 New like!",
-        body: `${session.user.name ?? "Someone"} liked your ${entry.strain.name} review`,
+        body: `${session.user.name ?? "Someone"} reacted to your ${entry.strain.name} review`,
         url: "/",
-      }).catch(() => {}); // fire-and-forget
+      }).catch(() => {});
     }
 
-    return NextResponse.json({ liked: true });
+    return NextResponse.json({ liked: true, emoji: created.emoji });
   }
 
   if (thoughtId) {
     const existing = await prisma.like.findUnique({
-      where: { userId_thoughtId: { userId: session.user.id, thoughtId } },
+      where: { userId_thoughtId: { userId, thoughtId } },
+    });
+    if (existing) {
+      if (existing.emoji === emoji) {
+        await prisma.like.delete({ where: { id: existing.id } });
+        return NextResponse.json({ liked: false, emoji: null });
+      }
+      const updated = await prisma.like.update({ where: { id: existing.id }, data: { emoji } });
+      return NextResponse.json({ liked: true, emoji: updated.emoji });
+    }
+    const created = await prisma.like.create({ data: { userId, thoughtId, emoji } });
+
+    // Notify the thought author (not themselves)
+    const thought = await prisma.thought.findUnique({
+      where: { id: thoughtId },
+      select: { userId: true },
+    });
+    if (thought && thought.userId !== userId) {
+      sendPushToUser(thought.userId, {
+        title: "💚 New like!",
+        body: `${session.user.name ?? "Someone"} reacted to your thought`,
+        url: "/",
+      }).catch(() => {});
+    }
+
+    return NextResponse.json({ liked: true, emoji: created.emoji });
+  }
+
+  if (commentId) {
+    const existing = await prisma.like.findUnique({
+      where: { userId_commentId: { userId, commentId } },
     });
     if (existing) {
       await prisma.like.delete({ where: { id: existing.id } });
       return NextResponse.json({ liked: false });
     }
-    await prisma.like.create({ data: { userId: session.user.id, thoughtId } });
-
-    // Notify the thought author (not themselves)
-    const thought = await prisma.thought.findUnique({
-      where: { id: thoughtId },
-      select: { userId: true, text: true },
-    });
-    if (thought && thought.userId !== session.user.id) {
-      sendPushToUser(thought.userId, {
-        title: "💚 New like!",
-        body: `${session.user.name ?? "Someone"} liked your thought`,
-        url: "/",
-      }).catch(() => {});
-    }
-
+    await prisma.like.create({ data: { userId, commentId, emoji: "❤️" } });
     return NextResponse.json({ liked: true });
   }
 }
